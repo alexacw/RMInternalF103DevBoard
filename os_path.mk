@@ -1,0 +1,1 @@
+CHIBIOS = ./ChibiOS_18.2.1

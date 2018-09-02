@@ -1,0 +1,29 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/ChibiOS_18.2.1/os/rt/include",
+                "${workspaceFolder}/ChibiOS_18.2.1/test/rt/testbuild",
+                "${workspaceFolder}/ChibiOS_18.2.1/os/license",
+                "${workspaceFolder}/ChibiOS_18.2.1/os/common/ports/ARMCMx/compilers/GCC",
+                "${workspaceFolder}/ChibiOS_18.2.1/os/common/ports/ARMCMx",
+                "${workspaceFolder}/ChibiOS_18.2.1/os/common/startup/ARMCMx/devices/STM32F1xx",
+                "${workspaceFolder}/board",
+                "${workspaceFolder}/ChibiOS_18.2.1/os/common/ext/ST/STM32F1xx",
+                "${workspaceFolder}/ChibiOS_18.2.1/os/common/ext/ARM/CMSIS/Core/Include",
+                "${workspaceFolder}/ChibiOS_18.2.1/os/common/oslib/include",
+                "${workspaceFolder}/ChibiOS_18.2.1/os/hal/include",
+                "${workspaceFolder}/ChibiOS_18.2.1/os/hal/osal/rt",
+                "${workspaceFolder}/ChibiOS_18.2.1/os/hal/ports/STM32/STM32F1xx",
+                "${workspaceFolder}/ChibiOS_18.2.1/os/hal/ports/common/ARMCMx"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+}
