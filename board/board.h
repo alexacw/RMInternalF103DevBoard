@@ -26,7 +26,7 @@
  * Board identifier.
  */
 #define BOARD_MINIMAL_STM32_F103
-#define BOARD_NAME              "STM32F103 Minimal Module"
+#define BOARD_NAME              "STM32F103 Forest V1"
 
 /*
  * Board frequencies.
@@ -53,29 +53,50 @@
 
 /* on-board */
 
-#define GPIOA_LED               8
-#define GPIOA_BUTTON            15
+#define GPIOA_LED               8U
+#define GPIOA_BUTTON            15U
 
-#define GPIOA_CAN_RX            11
-#define GPIOA_CAN_TX            12
+#define GPIOA_CAN_RX            11U
+#define GPIOA_CAN_TX            12U
+
+#define GPIOA_USART1_TX         9U
+#define GPIOA_USART1_RX         10U
+
+#define GPIOA_SERIAL_USB_RX     GPIOA_USART1_RX
+#define GPIOA_SERIAL_USB_TX     GPIOA_USART1_TX
+
+#define GPIOA_USART2_TX         2U
+#define GPIOA_USART2_RX         3U
+
+#define GPIOB_I2C2_SCL          10U
+#define GPIOB_I2C2_SDA          11U
+
+#define GPIOB_MPU6050_INT       3U
+#define GPIOB_MPU6050_SCL       GPIOB_I2C2_SCL
+#define GPIOB_MPU6050_SDA       GPIOB_I2C2_SDA
 
 //only HSE which uses the following pin, no LSE 
-#define GPIOC_OSC_IN          14
-#define GPIOC_OSC_OUT         15
+#define GPIOC_OSC_IN          14U
+#define GPIOC_OSC_OUT         15U
 
-#define GPIOB_MPU6050_INT       3
-#define GPIOB_MPU6050_SDA       11
-#define GPIOB_MPU6050_SDL       10
+
+
+#define LINE_LED PAL_LINE(GPIOA, GPIOA_LED)
+
+/*
+following refer to stm32f1 reference manual section 9.1
+*/
+
 /*
  * I/O ports initial setup, this configuration is established soon after reset
  * in the initialization code.
  *
- * The digits have the following meaning:
+ * The digits in ACR have the following meaning:
  *   0 - Analog input.
  *   1 - Push Pull output 10MHz.
  *   2 - Push Pull output 2MHz.
  *   3 - Push Pull output 50MHz.
- *   4 - Digital input.
+ *   4 - Digital input. (FLOATING)
  *   5 - Open Drain output 10MHz.
  *   6 - Open Drain output 2MHz.
  *   7 - Open Drain output 50MHz.
@@ -93,17 +114,26 @@
 /*
  * Port A setup.
  * Everything input with pull-up except:
+ * 5 - (GPIOA_LED 8)
+ * 4 - (GPIOA_BUTTON 15) ##the board has hardware debouncing and pull-up resistor installed to the button
+ * 4 - (GPIOA_CAN_RX 11)
+ * B - (GPIOA_CAN_TX 12)
+ * B - (GPIOA_USART1_TX 9)
+ * B - (GPIOA_USART2_TX 2)
  */
-#define VAL_GPIOACRL            0x88888888      /*  PA7...PA0 */
-#define VAL_GPIOACRH            0x88888885      /* PA15...PA8 */
+#define VAL_GPIOACRL            0x88888B88      /*  PA7...PA0 */
+#define VAL_GPIOACRH            0x488B48B5      /* PA15...PA8 */
 #define VAL_GPIOAODR            0xFFFFFFFF
 
 /*
  * Port B setup.
  * Everything input with pull-up except:
+ * F - (GPIOB_I2C2_SCL 10)
+ * F - (GPIOB_I2C2_SDA 11)
+ * 4 - (GPIOB_MPU6050_INT 3)
  */
 #define VAL_GPIOBCRL            0x88888888      /*  PB7...PB0 */
-#define VAL_GPIOBCRH            0x88888888      /* PB15...PB8 */
+#define VAL_GPIOBCRH            0x8888FF88      /* PB15...PB8 */
 #define VAL_GPIOBODR            0xFFFFFFFF
 
 /*
@@ -133,15 +163,15 @@
 #define VAL_GPIOECRH            0x88888888      /* PE15...PE8 */
 #define VAL_GPIOEODR            0xFFFFFFFF
 
-/*
- * USB bus activation macro, required by the USB driver.
- */
-#define usb_lld_connect_bus(usbp)	/* always connected */
+// /*
+//  * USB bus activation macro, required by the USB driver.
+//  */
+// #define usb_lld_connect_bus(usbp)	/* always connected */
 
-/*
- * USB bus de-activation macro, required by the USB driver.
- */
-#define usb_lld_disconnect_bus(usbp)	/* always connected */
+// /*
+//  * USB bus de-activation macro, required by the USB driver.
+//  */
+// #define usb_lld_disconnect_bus(usbp)	/* always connected */
 
 #if !defined(_FROM_ASM_)
 #ifdef __cplusplus

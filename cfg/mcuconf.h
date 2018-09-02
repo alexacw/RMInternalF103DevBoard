@@ -81,7 +81,7 @@
 /*
  * CAN driver system settings.
  */
-#define STM32_CAN_USE_CAN1                  FALSE
+#define STM32_CAN_USE_CAN1                  TRUE
 #define STM32_CAN_CAN1_IRQ_PRIORITY         11
 
 /*
@@ -104,7 +104,7 @@
  * I2C driver system settings.
  */
 #define STM32_I2C_USE_I2C1                  FALSE
-#define STM32_I2C_USE_I2C2                  FALSE
+#define STM32_I2C_USE_I2C2                  TRUE
 #define STM32_I2C_BUSY_TIMEOUT              50
 #define STM32_I2C_I2C1_IRQ_PRIORITY         5
 #define STM32_I2C_I2C2_IRQ_PRIORITY         5
@@ -153,8 +153,8 @@
 /*
  * SERIAL driver system settings.
  */
-#define STM32_SERIAL_USE_USART1             FALSE
-#define STM32_SERIAL_USE_USART2             FALSE
+#define STM32_SERIAL_USE_USART1             TRUE
+#define STM32_SERIAL_USE_USART2             TRUE
 #define STM32_SERIAL_USE_USART3             FALSE
 #define STM32_SERIAL_USE_UART4              FALSE
 #define STM32_SERIAL_USE_UART5              FALSE
@@ -187,8 +187,8 @@
 /*
  * UART driver system settings.
  */
-#define STM32_UART_USE_USART1               FALSE
-#define STM32_UART_USE_USART2               FALSE
+#define STM32_UART_USE_USART1               TRUE
+#define STM32_UART_USE_USART2               TRUE
 #define STM32_UART_USE_USART3               FALSE
 #define STM32_UART_USART1_IRQ_PRIORITY      12
 #define STM32_UART_USART2_IRQ_PRIORITY      12
@@ -201,7 +201,7 @@
 /*
  * USB driver system settings.
  */
-#define STM32_USB_USE_USB1                  TRUE
+#define STM32_USB_USE_USB1                  FALSE
 #define STM32_USB_LOW_POWER_ON_SUSPEND      FALSE
 #define STM32_USB_USB1_HP_IRQ_PRIORITY      13
 #define STM32_USB_USB1_LP_IRQ_PRIORITY      14

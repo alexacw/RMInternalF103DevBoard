@@ -115,7 +115,7 @@ LDSCRIPT = ./STM32F103xB.ld
 # setting.
 CSRC = $(ALLCSRC) \
        $(TESTSRC) \
-       usbcfg.c main.c
+       main.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.

@@ -46,4 +46,7 @@ void __early_init(void) {
  * Board-specific initialization code.
  */
 void boardInit(void) {
+  /*
+  * add pin alternate function remap here
+  */
 }
