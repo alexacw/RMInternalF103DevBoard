@@ -14,14 +14,15 @@
     limitations under the License.
 */
 
-#include <stdio.h>
-#include <string.h>
+#include "ch.hpp"
 
 #include "ch.h"
 #include "hal.h"
 
 #include "shell.h"
 #include "chprintf.h"
+
+using namespace chibios_rt;
 
 /*===========================================================================*/
 /* Command line related.                                                     */
@@ -86,7 +87,32 @@ static const ShellConfig shell_cfg1 = {
 
 /*
  * Blinker thread, times are in milliseconds.
+ * C++ version
  */
+class BlinkerThread : public BaseStaticThread<128>
+{
+protected:
+  void main(void) override
+  {
+    setName("blinker");
+
+    while (true)
+    {
+      palClearLine(LINE_LED);
+      chThdSleepMilliseconds(500);
+      palSetLine(LINE_LED);
+      chThdSleepMilliseconds(500);
+    }
+  }
+
+public:
+  BlinkerThread(void) : BaseStaticThread<128>()
+  {
+  }
+};
+
+/* C version :
+
 static THD_WORKING_AREA(waThread1, 128);
 static __attribute__((noreturn)) THD_FUNCTION(Thread1, arg)
 {
@@ -100,7 +126,11 @@ static __attribute__((noreturn)) THD_FUNCTION(Thread1, arg)
     palSetLine(LINE_LED);
     chThdSleepMilliseconds(500);
   }
-}
+
+} */
+
+/* do not create thread objects inside functions */
+BlinkerThread blinker;
 
 /*
  * Application entry point.
@@ -125,9 +155,14 @@ int main(void)
   sdStart(&SD1, NULL);
 
   /*
-   * Creates the blinker thread.
+   * Creates the blinker thread, C method.
    */
-  chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+  // chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
+
+  /*
+   * Creates the blinker thread, C++ method.
+   */
+  blinker.start(NORMALPRIO);
 
   /*
    * Normal main() thread activity, spawning shells.
