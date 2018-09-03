@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "chtypes.h": "c",
+        "atomic": "c",
+        "chtime.h": "c"
+    }
+}

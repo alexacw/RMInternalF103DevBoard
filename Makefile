@@ -115,7 +115,9 @@ LDSCRIPT = ./STM32F103xB.ld
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
 CSRC = $(ALLCSRC) \
-       $(TESTSRC) 
+       $(TESTSRC) \
+        ./src/MPU6050.c \
+        ./src/i2cdev_chibi.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
@@ -146,7 +148,7 @@ TCPPSRC =
 ASMSRC = $(ALLASMSRC)
 ASMXSRC = $(ALLXASMSRC)
 
-INCDIR = $(ALLINC) $(TESTINC) $(CONFDIR)
+INCDIR = $(ALLINC) $(TESTINC) $(CONFDIR) ./src
 
 #
 # Project, sources and paths

@@ -22,6 +22,8 @@
 #include "shell.h"
 #include "chprintf.h"
 
+#include "MPU6050.h"
+
 using namespace chibios_rt;
 
 /*===========================================================================*/
@@ -132,6 +134,12 @@ static __attribute__((noreturn)) THD_FUNCTION(Thread1, arg)
 /* do not create thread objects inside functions */
 BlinkerThread blinker;
 
+I2CConfig i2c2cfg = {
+    OPMODE_I2C,
+    400000,
+    FAST_DUTY_CYCLE_2,
+};
+
 /*
  * Application entry point.
  */
@@ -154,6 +162,9 @@ int main(void)
 
   sdStart(&SD1, NULL);
 
+  i2cObjectInit(&I2CD2);
+  i2cStart(&I2CD2, &i2c2cfg);
+
   /*
    * Creates the blinker thread, C method.
    */
@@ -164,14 +175,26 @@ int main(void)
    */
   blinker.start(NORMALPRIO);
 
+  thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
+                                          "shell", NORMALPRIO + 1,
+                                          shellThread, (void *)&shell_cfg1);
+
+  chThdSleepMilliseconds(500);
+  
+  MPU6050(0b1101000);
+  MPUinitialize();
+  if (MPUtestConnection())
+
+    chprintf((BaseSequentialStream *)&SD1, "connection ok\n");
+  else
+    chprintf((BaseSequentialStream *)&SD1, "connection failed\n");
+
+  chThdSleepMilliseconds(500);
   /*
    * Normal main() thread activity, spawning shells.
    */
   while (true)
   {
-    thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
-                                            "shell", NORMALPRIO + 1,
-                                            shellThread, (void *)&shell_cfg1);
     chThdWait(shelltp); /* Waiting termination.             */
 
     chThdSleepMilliseconds(1000);

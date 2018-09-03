@@ -128,12 +128,12 @@ following refer to stm32f1 reference manual section 9.1
 /*
  * Port B setup.
  * Everything input with pull-up except:
- * F - (GPIOB_I2C2_SCL 10)
- * F - (GPIOB_I2C2_SDA 11)
+ * E - (GPIOB_I2C2_SCL 10)
+ * E - (GPIOB_I2C2_SDA 11)
  * 4 - (GPIOB_MPU6050_INT 3)
  */
 #define VAL_GPIOBCRL            0x88888888      /*  PB7...PB0 */
-#define VAL_GPIOBCRH            0x8888FF88      /* PB15...PB8 */
+#define VAL_GPIOBCRH            0x8888DD88      /* PB15...PB8 */
 #define VAL_GPIOBODR            0xFFFFFFFF
 
 /*

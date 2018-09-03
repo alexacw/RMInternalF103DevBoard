@@ -51,10 +51,14 @@ THE SOFTWARE.
 #ifndef _I2CDEV_CHIBI_H_
 #define _I2CDEV_CHIBI_H_
 
+#include <stdint.h>
+#include <stdbool.h>
+typedef bool bool_t;
+
 /* currently only one I2C bus is possible */
-#define I2C_MPU 			I2CD1
+#define I2C_MPU 			I2CD2
 #define MPU_INT_PORT		GPIOB
-#define MPU_INT_PIN			4
+#define MPU_INT_PIN			3
 
 
 #define I2CDEV_DEFAULT_READ_TIMEOUT     1000
