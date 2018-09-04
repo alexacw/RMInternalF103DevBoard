@@ -33,7 +33,7 @@
                 "${workspaceFolder}/ChibiOS_18.2.1/os/various/shell",
                 "${workspaceFolder}/ChibiOS_18.2.1/os/hal/lib/streams",
                 "${workspaceFolder}/ChibiOS_18.2.1/test/rt/testbuild",
-                "/home/acw/Desktop/ChibiOS_18.2.1/os/various/cpp_wrappers"
+                "${workspaceFolder}/ChibiOS_18.2.1/os/various/cpp_wrappers"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
