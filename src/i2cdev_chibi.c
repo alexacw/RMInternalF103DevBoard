@@ -178,18 +178,31 @@ int8_t I2CdevreadWord(uint8_t devAddr, uint8_t regAddr, uint16_t *data, uint16_t
  */
 int8_t I2CdevreadBytes(uint8_t devAddr, uint8_t regAddr, uint8_t length, uint8_t *data, uint16_t timeout)
 {
-	//uint8_t mpu_txbuf[1], mpu_rxbuf[I2CDEV_BUFFER_LENGTH], i;
 	msg_t rdymsg;
-	if (length > I2CDEV_BUFFER_LENGTH)
+	if (length > I2CDEV_BUFFER_LENGTH - 1)
 	{
 		chprintf((BaseSequentialStream *)&SD1, "ERROR readBytes: length > I2CDEV BUFFERLENGTH\n");
 		return FALSE;
 	}
-	i2cAcquireBus(&I2C_MPU);
 
-	rdymsg = i2cMasterTransmitTimeout(&I2C_MPU, devAddr, &regAddr, 1, data, length, TIME_MS2I(timeout));
+	/**
+	 * @brief 
+	 * Modifications are done as the workaround for the one byte read limitation
+	 * not using DMA -> ChibiOS unsupported
+	 * using DMA -> one Byte read fail
+	 */
+
+	i2cAcquireBus(&I2C_MPU);
+	if (length = 1)
+	{
+		uint8_t temp[2];
+		rdymsg = i2cMasterTransmitTimeout(&I2C_MPU, devAddr, &regAddr, 1, temp, 2, TIME_MS2I(timeout));
+		memcpy(data, temp, 1);
+	}
+	else
+		rdymsg = i2cMasterTransmitTimeout(&I2C_MPU, devAddr, &regAddr, 1, data, length, TIME_MS2I(timeout));
+
 	i2cReleaseBus(&I2C_MPU);
-	chprintf((BaseSequentialStream *)&SD1, "I2C: %d  timeout: %d\n", rdymsg, timeout);
 	if (rdymsg == MSG_TIMEOUT || rdymsg == MSG_RESET)
 	{
 		chprintf((BaseSequentialStream *)&SD1, "I2C ERROR: %d\n", i2cGetErrors(&I2C_MPU));

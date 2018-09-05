@@ -134,7 +134,7 @@ static __attribute__((noreturn)) THD_FUNCTION(Thread1, arg)
 /* do not create thread objects inside functions */
 BlinkerThread blinker;
 
-I2CConfig i2c2cfg = {
+static const I2CConfig i2c2cfg = {
     OPMODE_I2C,
     400000,
     FAST_DUTY_CYCLE_2,
@@ -155,15 +155,15 @@ int main(void)
    */
   halInit();
   chSysInit();
+
+  sdStart(&SD1, NULL);
+
+  i2cStart(&I2CD2, &i2c2cfg);
+
   /*
    * Shell manager initialization.
    */
   shellInit();
-
-  sdStart(&SD1, NULL);
-
-  i2cObjectInit(&I2CD2);
-  i2cStart(&I2CD2, &i2c2cfg);
 
   /*
    * Creates the blinker thread, C method.
@@ -175,21 +175,22 @@ int main(void)
    */
   blinker.start(NORMALPRIO);
 
+  //chThdSleepMilliseconds(500);
+  sdWrite(&SD1, (const uint8_t*)"\n\n\n\n", 4);
+  MPU6050(0b1101000);
+  MPUinitialize();
+  if (MPUtestConnection())
+    chprintf((BaseSequentialStream *)&SD1, "MPU6050 connection ok\n");
+  else
+    chprintf((BaseSequentialStream *)&SD1, "MPU6050 connection failed\n");
+
+  chThdSleepMilliseconds(500);
+
+  //start the shell over UART1
   thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
                                           "shell", NORMALPRIO + 1,
                                           shellThread, (void *)&shell_cfg1);
 
-  chThdSleepMilliseconds(500);
-  
-  MPU6050(0b1101000);
-  MPUinitialize();
-  if (MPUtestConnection())
-
-    chprintf((BaseSequentialStream *)&SD1, "connection ok\n");
-  else
-    chprintf((BaseSequentialStream *)&SD1, "connection failed\n");
-
-  chThdSleepMilliseconds(500);
   /*
    * Normal main() thread activity, spawning shells.
    */
