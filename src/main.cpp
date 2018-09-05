@@ -131,7 +131,13 @@ static __attribute__((noreturn)) THD_FUNCTION(Thread1, arg)
 
 } */
 
-/* do not create thread objects inside functions */
+/** do not create thread objects inside functions if you dont know what you are doing
+ * and do not define variables in header files, and do not define them twice, use extern to share variables in files
+ * making sure that things are static
+ * 
+ * **Note that the keyword "static" acts differently in C and C++
+ * while all global variables are actually static
+ */
 BlinkerThread blinker;
 
 static const I2CConfig i2c2cfg = {
@@ -155,44 +161,48 @@ int main(void)
    */
   halInit();
   chSysInit();
+  static const SerialConfig sd1Config =
+      {115200,
+       0,
+       USART_CR2_STOP1_BITS,
+       0};
 
-  sdStart(&SD1, NULL);
+  sdStart(&SD1, &sd1Config);
 
   i2cStart(&I2CD2, &i2c2cfg);
 
   /*
-   * Shell manager initialization.
+   * Creates the blinker thread, C method. *just for reference
+   * chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
    */
-  shellInit();
-
-  /*
-   * Creates the blinker thread, C method.
-   */
-  // chThdCreateStatic(waThread1, sizeof(waThread1), NORMALPRIO, Thread1, NULL);
 
   /*
    * Creates the blinker thread, C++ method.
    */
   blinker.start(NORMALPRIO);
 
-  //chThdSleepMilliseconds(500);
   sdWrite(&SD1, (const uint8_t *)"\n\n\n\n", 4);
-  MPU6050(0b1101000);
+  
+  chThdSleepMilliseconds(500);
+  MPU6050(MPU6050_ADDRESS_AD0_LOW);
   MPUinitialize();
-  if (MPUtestConnection())
-    chprintf((BaseSequentialStream *)&SD1, "MPU6050 connection ok\n");
-  else
-    chprintf((BaseSequentialStream *)&SD1, "MPU6050 connection failed\n");
+  chprintf((BaseSequentialStream *)&SD1, "MPU6050 connection %s\n",
+           MPUtestConnection() ? "OK" : "FAILED");
 
   chThdSleepMilliseconds(500);
 
-  //start the shell over UART1
+
+  /*
+   * Shell manager initialization.
+   */
+  shellInit();
+  //start the shell thread over UART1
   thread_t *shelltp = chThdCreateFromHeap(NULL, SHELL_WA_SIZE,
                                           "shell", NORMALPRIO + 1,
                                           shellThread, (void *)&shell_cfg1);
 
   /*
-   * Normal main() thread activity, spawning shells.
+   * Normal main() thread activity
    */
   while (true)
   {
