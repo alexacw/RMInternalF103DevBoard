@@ -176,7 +176,7 @@ int main(void)
   blinker.start(NORMALPRIO);
 
   //chThdSleepMilliseconds(500);
-  sdWrite(&SD1, (const uint8_t*)"\n\n\n\n", 4);
+  sdWrite(&SD1, (const uint8_t *)"\n\n\n\n", 4);
   MPU6050(0b1101000);
   MPUinitialize();
   if (MPUtestConnection())
@@ -196,8 +196,12 @@ int main(void)
    */
   while (true)
   {
-    chThdWait(shelltp); /* Waiting termination.             */
+    chprintf((BaseSequentialStream *)&SD1,
+             "ax: %d ay:%d az:%d\n",
+             MPUgetAccelerationX(),
+             MPUgetAccelerationY(),
+             MPUgetAccelerationZ());
 
-    chThdSleepMilliseconds(1000);
+    chThdSleepMilliseconds(100);
   }
 }
