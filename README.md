@@ -3,6 +3,6 @@ This is the repository showcasing the usage of ChibiOS on this cheap STM32F103C8
 
 ![alt text](https://github.com/alexacw/RMInternalF103DevBoard/blob/master/image.jpeg)
 
-#Toolchain Setup (Undone)
-##Linux (Ubuntu)
-##Windows
+# Toolchain Setup (Undone)
+## Linux (Ubuntu)
+## Windows
