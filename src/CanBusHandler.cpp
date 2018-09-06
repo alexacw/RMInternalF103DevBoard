@@ -26,8 +26,10 @@ static const CANConfig cancfg = {
  * @param canp 
  * @param flags 
  */
-void rxCB(CANDriver *canp, uint32_t flags){
-    canTryReceiveI(canp,)
+void rxCB(CANDriver *canp, uint32_t flags)
+{
+    CANRxFrame f;
+    canTryReceiveI(canp, CAN_ANY_MAILBOX, &f);
 };
 void txCB(CANDriver *canp, uint32_t flags);
 

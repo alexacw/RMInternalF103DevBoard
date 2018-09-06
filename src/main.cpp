@@ -205,14 +205,14 @@ int main(void)
   /*
    * Normal main() thread activity
    */
+  int16_t rx = 0, ry = 0, rz = 0, ax = 0, ay = 0, az = 0;
   while (true)
   {
+    MPUgetRotation(&rx, &ry, &rx);
+    MPUgetAcceleration(&ax, &ay, &az);
     chprintf((BaseSequentialStream *)&SD1,
-             "ax: %d ay:%d az:%d\n",
-             MPUgetAccelerationX(),
-             MPUgetAccelerationY(),
-             MPUgetAccelerationZ());
-
+             "rx: %d ry:%d rz:%d ax: %d ay:%d az:%d\n",
+             rx, ry, rz, ax, ay, az);
     chThdSleepMilliseconds(100);
   }
 }

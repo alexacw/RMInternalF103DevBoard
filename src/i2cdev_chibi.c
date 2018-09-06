@@ -193,7 +193,7 @@ int8_t I2CdevreadBytes(uint8_t devAddr, uint8_t regAddr, uint8_t length, uint8_t
 	 */
 
 	i2cAcquireBus(&I2C_MPU);
-	if (length = 1)
+	if (length == 1)
 	{
 		uint8_t temp[2];
 		rdymsg = i2cMasterTransmitTimeout(&I2C_MPU, devAddr, &regAddr, 1, temp, 2, TIME_MS2I(timeout));
