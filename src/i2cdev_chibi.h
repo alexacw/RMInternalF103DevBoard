@@ -61,7 +61,7 @@ typedef bool bool_t;
 #define MPU_INT_PIN			3
 
 
-#define I2CDEV_DEFAULT_READ_TIMEOUT     1000
+#define I2CDEV_DEFAULT_READ_TIMEOUT     10
 #define I2CDEV_BUFFER_LENGTH			64
 
 int8_t I2CdevreadBit(uint8_t devAddr, uint8_t regAddr, uint8_t bitNum, uint8_t *data, uint16_t timeout);

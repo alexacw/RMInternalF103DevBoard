@@ -142,7 +142,7 @@ BlinkerThread blinker;
 
 static const I2CConfig i2c2cfg = {
     OPMODE_I2C,
-    400000,
+    100000,
     FAST_DUTY_CYCLE_2,
 };
 
@@ -213,6 +213,6 @@ int main(void)
     chprintf((BaseSequentialStream *)&SD1,
              "rx: %d ry:%d rz:%d ax: %d ay:%d az:%d\n",
              rx, ry, rz, ax, ay, az);
-    chThdSleepMilliseconds(100);
+    chThdSleepMilliseconds(20);
   }
 }
