@@ -167,8 +167,10 @@ int main(void)
        USART_CR2_STOP1_BITS,
        0};
 
+  /*
+   * Activates the CAN driver 1, Serial Driver 1, and I2C 2.
+   */
   sdStart(&SD1, &sd1Config);
-
   i2cStart(&I2CD2, &i2c2cfg);
 
   /*
@@ -182,7 +184,7 @@ int main(void)
   blinker.start(NORMALPRIO);
 
   sdWrite(&SD1, (const uint8_t *)"\n\n\n\n", 4);
-  
+
   chThdSleepMilliseconds(500);
   MPU6050(MPU6050_ADDRESS_AD0_LOW);
   MPUinitialize();
@@ -190,7 +192,6 @@ int main(void)
            MPUtestConnection() ? "OK" : "FAILED");
 
   chThdSleepMilliseconds(500);
-
 
   /*
    * Shell manager initialization.

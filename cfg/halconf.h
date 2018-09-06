@@ -235,14 +235,14 @@
  * @brief   Sleep mode related APIs inclusion switch.
  */
 #if !defined(CAN_USE_SLEEP_MODE) || defined(__DOXYGEN__)
-#define CAN_USE_SLEEP_MODE                  TRUE
+#define CAN_USE_SLEEP_MODE                  FALSE
 #endif
 
 /**
  * @brief   Enforces the driver to use direct callbacks rather than OSAL events.
  */
 #if !defined(CAN_ENFORCE_USE_CALLBACKS) || defined(__DOXYGEN__)
-#define CAN_ENFORCE_USE_CALLBACKS           FALSE
+#define CAN_ENFORCE_USE_CALLBACKS           TRUE
 #endif
 
 /*===========================================================================*/
