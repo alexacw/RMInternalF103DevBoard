@@ -23,6 +23,7 @@
 #include "chprintf.h"
 
 #include "MPU6050.h"
+#include "CanBusHandler.hpp"
 
 using namespace chibios_rt;
 
@@ -146,6 +147,12 @@ static const I2CConfig i2c2cfg = {
     FAST_DUTY_CYCLE_2,
 };
 
+static const SerialConfig sd1Config =
+    {115200,
+     0,
+     USART_CR2_STOP1_BITS,
+     0};
+
 /*
  * Application entry point.
  */
@@ -161,11 +168,6 @@ int main(void)
    */
   halInit();
   chSysInit();
-  static const SerialConfig sd1Config =
-      {115200,
-       0,
-       USART_CR2_STOP1_BITS,
-       0};
 
   /*
    * Activates the CAN driver 1, Serial Driver 1, and I2C 2.
@@ -183,8 +185,15 @@ int main(void)
    */
   blinker.start(NORMALPRIO);
 
+  /**
+ * start the can bus test
+ * 
+ */
+  CanBusHandler::caninit(&CAND1);
+
   sdWrite(&SD1, (const uint8_t *)"\n\n\n\n", 4);
 
+  //initiallize the mpu6050 reader
   chThdSleepMilliseconds(500);
   MPU6050(MPU6050_ADDRESS_AD0_LOW);
   MPUinitialize();
@@ -213,6 +222,10 @@ int main(void)
     chprintf((BaseSequentialStream *)&SD1,
              "rx: %d ry:%d rz:%d ax: %d ay:%d az:%d\n",
              rx, ry, rz, ax, ay, az);
-    chThdSleepMilliseconds(20);
+    chprintf((BaseSequentialStream *)&SD1,
+             "r: %D\n", CanBusHandler::receiveCount);
+    chprintf((BaseSequentialStream *)&SD1,
+             "r: %d\n", CanBusHandler::f.SID);
+    chThdSleepMilliseconds(500);
   }
 }

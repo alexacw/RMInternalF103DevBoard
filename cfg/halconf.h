@@ -235,7 +235,7 @@
  * @brief   Sleep mode related APIs inclusion switch.
  */
 #if !defined(CAN_USE_SLEEP_MODE) || defined(__DOXYGEN__)
-#define CAN_USE_SLEEP_MODE                  FALSE
+#define CAN_USE_SLEEP_MODE                  TRUE
 #endif
 
 /**
