@@ -61,7 +61,7 @@ class TransmitterThread : public chibios_rt::BaseStaticThread<1024>
         txmsg.RTR = CAN_RTR_DATA;
         txmsg.DLC = 8;
         txmsg.data8[0] = 0;
-        txmsg.data8[1] = 500;
+        txmsg.data8[1] = 300;
         while (true)
         {
             canTransmitTimeout(&CAND1, CAN_ANY_MAILBOX, &txmsg, TIME_MS2I(100));
