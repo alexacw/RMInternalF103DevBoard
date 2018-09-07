@@ -7,6 +7,7 @@ namespace CanBusHandler
 {
 
 int32_t receiveCount = 0;
+int16_t current_1 = 0;
 CANRxFrame f;
 /**
    * @brief  
@@ -60,10 +61,10 @@ class TransmitterThread : public chibios_rt::BaseStaticThread<1024>
         txmsg.SID = 0x200;
         txmsg.RTR = CAN_RTR_DATA;
         txmsg.DLC = 8;
-        txmsg.data8[0] = 0;
-        txmsg.data8[1] = 300;
         while (true)
         {
+            txmsg.data8[0] = current_1 >> 8;
+            txmsg.data8[1] = 300;
             canTransmitTimeout(&CAND1, CAN_ANY_MAILBOX, &txmsg, TIME_MS2I(100));
             chThdSleepMilliseconds(50);
         }

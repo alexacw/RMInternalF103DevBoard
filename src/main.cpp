@@ -21,6 +21,7 @@
 
 #include "shell.h"
 #include "chprintf.h"
+#include <stdlib.h>
 
 #include "MPU6050.h"
 #include "CanBusHandler.hpp"
@@ -76,8 +77,18 @@ static void cmd_write(BaseSequentialStream *chp, int argc, char *argv[])
   chprintf(chp, "\r\n\nstopped\r\n");
 }
 
+static void setCurrent(BaseSequentialStream *chp, int argc, char *argv[])
+{
+  if (argc == 1)
+  {
+    CanBusHandler::current_1 =
+        strtol(argv[0], NULL, 0);
+  }
+}
+
 static const ShellCommand commands[] = {
     {"write", cmd_write},
+    {"sc", setCurrent},
     {NULL, NULL}};
 
 static const ShellConfig shell_cfg1 = {
