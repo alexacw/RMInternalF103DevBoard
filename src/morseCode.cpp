@@ -22,9 +22,7 @@ class MorseCodeThd : public BaseStaticThread<64>
   public:
     MorseCodeThd(const char *const c_str)
         : BaseStaticThread<64>(),
-          c_str(c_str)
-    {
-    }
+          c_str(c_str) {}
 
   protected:
     void main() override
@@ -36,7 +34,7 @@ class MorseCodeThd : public BaseStaticThread<64>
         while (!BaseThread::shouldTerminate())
         {
             palWriteLine(LINE_LED, ~LED_ON_STATE);
-            chThdSleepMilliseconds(500);
+            chThdSleepMilliseconds(200);
 
             if (!was_interrupted)
                 chEvtWaitAny(EVENT_MASK(0)); //wait for button press
@@ -88,7 +86,7 @@ class MorseCodeThd : public BaseStaticThread<64>
   private:
     const char *c_str;
     event_listener buttonLis;
-}; // namespace MorseCode
+};
 
 static MorseCodeThd thd(str);
 

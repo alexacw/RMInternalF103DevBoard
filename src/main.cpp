@@ -31,8 +31,13 @@
 
 #include "button.hpp"
 #include "morseCode.hpp"
+#include "CanBusHandler.hpp"
+#include "DR16.hpp"
 
 using namespace chibios_rt;
+
+//global variables
+volatile bool enable_logging = false;
 
 /*
  * Application entry point.
@@ -53,6 +58,9 @@ int main(void)
   UserShell::initShell();
   Button::buttonStart();
   MorseCode::morseCodeStart();
+  CanBusHandler::start(&CAND1);
+  DR16::start();
+
   /*
 	 * Normal main() thread activity
    * since this is doing nothing, you can just call "return 0;" here
@@ -64,9 +72,24 @@ int main(void)
     systime_t startT = chibios_rt::System::getTime();
 
     // ... something to be done every 1000 ms ...
+    if (enable_logging)
+    {
+      chprintf((BaseSequentialStream *)&SHELL_SD,
+               "motor 1 torque: %ld\norientation: %ld\nrpm: %ld\nreceive count: %ld\n",
+               CanBusHandler::tourqe_1,
+               CanBusHandler::orientation_1,
+               CanBusHandler::rpm_1,
+               CanBusHandler::receiveCount);
 
+      chprintf((BaseSequentialStream *)&SHELL_SD,
+               "DR16 ch0 %d\nch1 %d\nch2 %d\nch3 %d\n",
+               DR16::rcValue.rc.ch0,
+               DR16::rcValue.rc.ch1,
+               DR16::rcValue.rc.ch2,
+               DR16::rcValue.rc.ch3);
+    }
     //this function will wait until 1000 ms is passed since startT
-    chibios_rt::BaseThread::sleepUntil(startT + TIME_MS2I(1000));
+    chibios_rt::BaseThread::sleepUntil(startT + TIME_MS2I(250));
 
     //chThdSleepMilliseconds(1000); // <- delay which waits for a duration, not waiting until time point
   }

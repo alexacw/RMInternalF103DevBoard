@@ -116,16 +116,18 @@ LDSCRIPT = ./STM32F103x8.ld
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
 CSRC = $(ALLCSRC) \
-       $(TESTSRC)
+	   $(TESTSRC)
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
 CPPSRC = $(ALLCPPSRC) \
-        ./src/main.cpp\
-        ./src/userShell.cpp \
-        ./src/morseCode.cpp \
-        ./src/button.cpp
-        
+		./src/main.cpp\
+		./src/userShell.cpp \
+		./src/morseCode.cpp \
+		./src/button.cpp \
+		./src/CanBusHandler.cpp \
+		./src/DR16.cpp
+		
 
 # C sources to be compiled in ARM mode regardless of the global setting.
 # NOTE: Mixing ARM and THUMB mode enables the -mthumb-interwork compiler
@@ -218,7 +220,10 @@ ULIBDIR =
 # List all user libraries here
 ULIBS =
 
-#
+#flashing to the board
+upload: build/$(PROJECT).bin
+		openocd -f openocd/start_st-link_flash.cfg
+
 # End of user defines
 ##############################################################################
 

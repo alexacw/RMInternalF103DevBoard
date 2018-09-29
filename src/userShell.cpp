@@ -7,12 +7,24 @@
  */
 
 #include "userShell.hpp"
+#include "CanBusHandler.hpp"
+#include "main.hpp"
+#include <stdio.h>
+#include <stdlib.h>
 
 namespace UserShell
 {
+
+//forward declaration of shell functions
+void shellTestPrint(BaseSequentialStream *chp, int argc, char *argv[]);
+void setCurrent(BaseSequentialStream *chp, int argc, char *argv[]);
+void toggleLog(BaseSequentialStream *chp, int argc, char *argv[]);
+
 const ShellCommand commands[] =
     {
         {"testPrint", shellTestPrint},
+        {"sc", setCurrent},
+        {"tl", toggleLog},
         {NULL, NULL}};
 
 static const SerialConfig shellSDConfig =
@@ -47,4 +59,23 @@ void shellTestPrint(BaseSequentialStream *chp, int argc, char *argv[])
         chprintf(chp, "argv[%d] = %s\n", i, argv[i]);
     }
 }
+
+void setCurrent(BaseSequentialStream *chp, int argc, char *argv[])
+{
+    (void)chp;
+    if (argc == 1)
+    {
+        CanBusHandler::setCurrent_1 = strtol(argv[0], NULL, 0);
+        chprintf(chp, "set current to %ld\n", CanBusHandler::setCurrent_1);
+    }
+}
+
+void toggleLog(BaseSequentialStream *chp, int argc, char *argv[])
+{
+    (void)chp;
+    (void)argc;
+    (void)argv;
+    enable_logging = !enable_logging;
+};
+
 } // namespace UserShell
