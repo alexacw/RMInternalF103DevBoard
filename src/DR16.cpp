@@ -14,7 +14,7 @@ static volatile RC_Msg_t rxbuf;
 static volatile systime_t lastReceive;
 volatile bool isConnected = false;
 
-static void decodeDR16()
+static void decode()
 {
 	rcValue.rc.ch0 = rxbuf.rc.ch0_l | rxbuf.rc.ch0_h << 8;
 	rcValue.rc.ch1 = rxbuf.rc.ch1_l | rxbuf.rc.ch1_h << 5;
@@ -22,6 +22,17 @@ static void decodeDR16()
 	rcValue.rc.ch3 = rxbuf.rc.ch3_l | rxbuf.rc.ch3_h << 7;
 	rcValue.rc.s1 = rxbuf.rc.s1;
 	rcValue.rc.s2 = rxbuf.rc.s2;
+}
+
+void resetValue()
+{
+	rcValue.rc.ch0 = RC_CH_VALUE_MID;
+	rcValue.rc.ch1 = RC_CH_VALUE_MID;
+	rcValue.rc.ch2 = RC_CH_VALUE_MID;
+	rcValue.rc.ch3 = RC_CH_VALUE_MID;
+	rcValue.mouse.press_l = 0;
+	rcValue.mouse.press_r = 0;
+	rcValue.key.v = 0;
 }
 
 /**
@@ -38,9 +49,11 @@ static THD_WORKING_AREA(DR16_receiver_thread_wa, 256);
 static THD_FUNCTION(DR16_receiver_thread, p)
 {
 	(void)p;
-	chRegSetThreadName("DR16 receiver");
+	chRegSetThreadName("DR16RxThd");
 
+	static uint32_t failcount = 0;
 	volatile size_t rxBytes;
+
 	while (!chThdShouldTerminateX())
 	{
 		rxBytes = sizeof(rxbuf);
@@ -50,21 +63,18 @@ static THD_FUNCTION(DR16_receiver_thread, p)
 							   (void *)&rxbuf,
 							   TIME_MS2I(DR16_RECEIVE_TIMEOUT_MS)))
 		{
-			decodeDR16(); //quite atomic write, can implement mutex if input combination is important
+			isConnected = true;
+			decode(); //quite atomic write, can implement mutex if input combination is important
 			chThdSleepMilliseconds(DR16_RECEIVE_WAIT_MS);
 		}
+		else
+		{
+			failcount++;
+			if (failcount > DR16_CONNECT_TIMEOUT_FAIL_COUNT)
+				isConnected = false;
+			resetValue;
+		}
 	}
-}
-
-void resetValue()
-{
-	rcValue.rc.ch0 = RC_CH_VALUE_MID;
-	rcValue.rc.ch1 = RC_CH_VALUE_MID;
-	rcValue.rc.ch2 = RC_CH_VALUE_MID;
-	rcValue.rc.ch3 = RC_CH_VALUE_MID;
-	rcValue.mouse.press_l = 0;
-	rcValue.mouse.press_r = 0;
-	rcValue.key.v = 0;
 }
 
 /**

@@ -58,7 +58,7 @@ int main(void)
   UserShell::initShell();
   Button::buttonStart();
   MorseCode::morseCodeStart();
-  CanBusHandler::start(&CAND1);
+  CanBusHandler::start();
   DR16::start();
 
   /*
@@ -72,25 +72,29 @@ int main(void)
     systime_t startT = chibios_rt::System::getTime();
 
     // ... something to be done every 1000 ms ...
+
     if (enable_logging)
     {
       chprintf((BaseSequentialStream *)&SHELL_SD,
-               "motor 1 torque: %ld\norientation: %ld\nrpm: %ld\nreceive count: %ld\n",
+               "\nmotor 1:\ntorque: %ld\norientation: %ld\nrpm: %ld\nreceive count: %ld\n",
                CanBusHandler::tourqe_1,
                CanBusHandler::orientation_1,
                CanBusHandler::rpm_1,
                CanBusHandler::receiveCount);
-
-      chprintf((BaseSequentialStream *)&SHELL_SD,
-               "DR16 ch0 %d\nch1 %d\nch2 %d\nch3 %d\n",
-               DR16::rcValue.rc.ch0,
-               DR16::rcValue.rc.ch1,
-               DR16::rcValue.rc.ch2,
-               DR16::rcValue.rc.ch3);
+      if (DR16::isConnected)
+        chprintf((BaseSequentialStream *)&SHELL_SD,
+                 "\nDR16:\nch0 %d\nch1 %d\nch2 %d\nch3 %d\ns1 %d\ns2 %d\n",
+                 DR16::rcValue.rc.ch0,
+                 DR16::rcValue.rc.ch1,
+                 DR16::rcValue.rc.ch2,
+                 DR16::rcValue.rc.ch3,
+                 DR16::rcValue.rc.s1,
+                 DR16::rcValue.rc.s2);
+      else
+        chprintf((BaseSequentialStream *)&SHELL_SD,
+                 "\nDR16: remote not connected\n");
     }
     //this function will wait until 1000 ms is passed since startT
     chibios_rt::BaseThread::sleepUntil(startT + TIME_MS2I(250));
-
-    //chThdSleepMilliseconds(1000); // <- delay which waits for a duration, not waiting until time point
   }
 }

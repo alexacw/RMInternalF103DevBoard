@@ -81,6 +81,8 @@ class MorseCodeThd : public BaseStaticThread<64>
 
             current_char_ptr++;
         }
+
+        chEvtUnregister(&Button::ButtonPressedEvt, &buttonLis);
     }
 
   private:
