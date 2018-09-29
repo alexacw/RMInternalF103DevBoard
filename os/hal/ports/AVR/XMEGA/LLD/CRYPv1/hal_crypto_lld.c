@@ -126,8 +126,8 @@ static void aes_lld_stop(void) {
 void cry_lld_init(void) {
 
 #if AVR_CRY_USE_CRY1 || defined(__DOXYGEN__)
-  aes_lld_reset();  // Reset the AES module.
-  aes_lld_stop();   // Stop the AES module.
+  aes_lld_reset();  /* Reset the AES module.  */
+  aes_lld_stop();   /* Stop the AES module.   */
   CRYD1.config = NULL;
   CRYD1.state = CRY_STOP;
 #endif
@@ -170,7 +170,7 @@ void cry_lld_start(CRYDriver *cryp) {
 void cry_lld_stop(CRYDriver *cryp) {
 
   if (cryp->state == CRY_READY) {
-    aes_lld_stop();   // Stop the AES module.
+    aes_lld_stop();   /* Stop the AES module. */
   }
 }
 
@@ -189,10 +189,10 @@ void cry_lld_stop(CRYDriver *cryp) {
  *
  * @notapi
  */
-cryerror_t cry_lld_loadkey(CRYDriver *cryp,
-                           cryalgorithm_t algorithm,
-                           size_t size,
-                           const uint8_t *keyp) {
+cryerror_t cry_lld_loadkey(CRYDriver        *cryp,
+                           cryalgorithm_t   algorithm,
+                           size_t           size,
+                           const uint8_t    *keyp) {
 
   uint8_t i;
 
@@ -200,11 +200,11 @@ cryerror_t cry_lld_loadkey(CRYDriver *cryp,
   (void)size;
 
   if (size != AES_BLOCK_SIZE) {
-    return CRY_ERR_INV_KEY_SIZE; // invalid size error code.
+    return CRY_ERR_INV_KEY_SIZE; /* invalid size error code. */
   }
 
   if (algorithm == cry_algo_aes) {
-    // Load the Key into the AES key memory.
+    /* Load the Key into the AES key memory. */
     for (i = 0; i < AES_BLOCK_SIZE; i++) {
       AES.KEY = keyp[i];
     }
@@ -237,40 +237,40 @@ cryerror_t cry_lld_loadkey(CRYDriver *cryp,
  *
  * @notapi
  */
-cryerror_t cry_lld_encrypt_AES(CRYDriver *cryp,
-                               crykey_t key_id,
-                               const uint8_t *src,
-                               uint8_t *dest) {
+cryerror_t cry_lld_encrypt_AES(CRYDriver      *cryp,
+                               crykey_t       key_id,
+                               const uint8_t  *src,
+                               uint8_t        *dest) {
   uint8_t i;
 
   (void)cryp;
   (void)key_id;
 
-  // Load the Data into the AES state memory.
+  /* Load the Data into the AES state memory. */
   for (i = 0; i < AES_BLOCK_SIZE; i++) {
     AES.STATE = src[i];
   }
 
-  // Set the AES encryption mode.
+  /* Set the AES encryption mode. */
   aes_lld_set_mode_encrypt();
 
-  // Start the AES.
+  /* Start the AES. */
   aes_lld_start();
 
-  // Wait the Encryption to finish or an error to occurs.
+  /* Wait the Encryption to finish or an error to occurs. */
   do{
-	}
-	while ((AES.STATUS & (AES_SRIF_bm|AES_ERROR_bm)) == 0);
+  }
+  while ((AES.STATUS & (AES_SRIF_bm|AES_ERROR_bm)) == 0);
 
-  // Check error.
+  /* Check error. */
   if((AES.STATUS & AES_ERROR_bm) == 0) {
-		// Store the result of the encryption
-		for(i = 0; i < AES_BLOCK_SIZE; i++) {
-			dest[i] = AES.STATE;
+    /* Store the result of the encryption. */
+    for(i = 0; i < AES_BLOCK_SIZE; i++) {
+      dest[i] = AES.STATE;
     }
-	}
-	else {
-		return CRY_ERR_OP_FAILURE;
+  }
+  else {
+    return CRY_ERR_OP_FAILURE;
   }
 
   return CRY_NOERROR;
@@ -297,41 +297,41 @@ cryerror_t cry_lld_encrypt_AES(CRYDriver *cryp,
  *
  * @notapi
  */
-cryerror_t cry_lld_decrypt_AES(CRYDriver *cryp,
-                               crykey_t key_id,
-                               const uint8_t *src,
-                               uint8_t *dest) {
+cryerror_t cry_lld_decrypt_AES(CRYDriver      *cryp,
+                               crykey_t       key_id,
+                               const uint8_t  *src,
+                               uint8_t        *dest) {
 
   uint8_t i;
 
   (void)cryp;
   (void)key_id;
 
-  // Load data into AES state memory.
-	for (i = 0; i < AES_BLOCK_SIZE; i++) {
-		AES.STATE =  src[i];
+  /* Load data into AES state memory. */
+  for (i = 0; i < AES_BLOCK_SIZE; i++) {
+    AES.STATE =  src[i];
   }
 
-  // Set the AES decryption mode.
+  /* Set the AES decryption mode. */
   aes_lld_set_mode_decrypt();
 
-  // Start the AES.
+  /* Start the AES. */
   aes_lld_start();
 
-  // Wait the Encryption to finish or an error to occurs.
-	do {
-	}
-	while ((AES.STATUS & (AES_SRIF_bm|AES_ERROR_bm)) == 0);
+  /* Wait the Encryption to finish or an error to occurs. */
+  do {
+  }
+  while ((AES.STATUS & (AES_SRIF_bm|AES_ERROR_bm)) == 0);
 
-	// Check if not error.
-	if ((AES.STATUS & AES_ERROR_bm) == 0) {
-		// Store the result.
-		for (i = 0; i < AES_BLOCK_SIZE; i++) {
-			dest[i] = AES.STATE;
+  /* Check if not error. */
+  if ((AES.STATUS & AES_ERROR_bm) == 0) {
+    /* Store the result. */
+    for (i = 0; i < AES_BLOCK_SIZE; i++) {
+      dest[i] = AES.STATE;
     }
-	}
+  }
   else {
-		return CRY_ERR_OP_FAILURE;
+    return CRY_ERR_OP_FAILURE;
   }
 
   return CRY_NOERROR;

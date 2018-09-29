@@ -58,8 +58,14 @@ endif
 ifneq ($(findstring HAL_USE_SERIAL TRUE,$(HALCONF)),)
 PLATFORMSRC += ${CHIBIOS}/os/hal/templates/hal_serial_lld.c
 endif
+ifneq ($(findstring HAL_USE_SIO TRUE,$(HALCONF)),)
+PLATFORMSRC += ${CHIBIOS}/os/hal/templates/hal_sio_lld.c
+endif
 ifneq ($(findstring HAL_USE_SPI TRUE,$(HALCONF)),)
 PLATFORMSRC += ${CHIBIOS}/os/hal/templates/hal_spi_lld.c
+endif
+ifneq ($(findstring HAL_USE_TRNG TRUE,$(HALCONF)),)
+PLATFORMSRC += ${CHIBIOS}/os/hal/templates/hal_trng_lld.c
 endif
 ifneq ($(findstring HAL_USE_UART TRUE,$(HALCONF)),)
 PLATFORMSRC += ${CHIBIOS}/os/hal/templates/hal_uart_lld.c
@@ -88,8 +94,10 @@ PLATFORMSRC = ${CHIBIOS}/os/hal/templates/hal_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_rtc_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_sdc_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_serial_lld.c \
+              ${CHIBIOS}/os/hal/templates/hal_sio_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_spi_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_st_lld.c \
+              ${CHIBIOS}/os/hal/templates/hal_trng_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_uart_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_usb_lld.c \
               ${CHIBIOS}/os/hal/templates/hal_wdg_lld.c

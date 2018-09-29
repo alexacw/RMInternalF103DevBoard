@@ -72,7 +72,7 @@ static THD_FUNCTION(DR16_receiver_thread, p)
 			failcount++;
 			if (failcount > DR16_CONNECT_TIMEOUT_FAIL_COUNT)
 				isConnected = false;
-			resetValue;
+			resetValue();
 		}
 	}
 }

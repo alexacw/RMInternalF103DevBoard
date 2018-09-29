@@ -149,8 +149,7 @@ cryerror_t cryLoadTransientKey(CRYDriver *cryp,
                                const uint8_t *keyp) {
   cryerror_t err;
 
-  osalDbgCheck((cryp != NULL) && (size <= HAL_CRY_MAX_KEY_SIZE) &&
-               (keyp != NULL));
+  osalDbgCheck((cryp != NULL) &&  (keyp != NULL));
 
 
 #if HAL_CRY_ENFORCE_FALLBACK == FALSE
@@ -165,12 +164,6 @@ cryerror_t cryLoadTransientKey(CRYDriver *cryp,
     err = cry_fallback_loadkey(cryp, algorithm, size, keyp);
   }
 #endif
-
-  if (err == CRY_NOERROR) {
-    /* Storing the transient key info.*/
-    cryp->key0_type = algorithm;
-    cryp->key0_size = size;
-  }
 
   return err;
 }
@@ -1700,7 +1693,8 @@ cryerror_t cryHMACSHA512Final(CRYDriver *cryp,
  * @brief   True random numbers generator.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
- * @param[out] out              128 bits output buffer
+ * @param[in] size              size of output buffer
+ * @param[out] out              output buffer
  * @return                      The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
  * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
@@ -1710,18 +1704,19 @@ cryerror_t cryHMACSHA512Final(CRYDriver *cryp,
  *
  * @api
  */
-cryerror_t cryTRNG(CRYDriver *cryp, uint8_t *out) {
+cryerror_t cryTRNG(CRYDriver *cryp, size_t size, uint8_t *out) {
 
   osalDbgCheck((cryp != NULL) && (out != NULL));
 
   osalDbgAssert(cryp->state == CRY_READY, "not ready");
 
 #if CRY_LLD_SUPPORTS_TRNG == TRUE
-  return cry_lld_TRNG(cryp, out);
+  return cry_lld_TRNG(cryp, size, out);
 #elif HAL_CRY_USE_FALLBACK == TRUE
-  return cry_fallback_TRNG(cryp, out);
+  return cry_fallback_TRNG(cryp, size, out);
 #else
   (void)cryp;
+  (void)size;
   (void)out;
 
   return CRY_ERR_INV_ALGO;

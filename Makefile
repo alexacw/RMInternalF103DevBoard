@@ -220,12 +220,12 @@ ULIBDIR =
 # List all user libraries here
 ULIBS =
 
-#flashing to the board
-upload: build/$(PROJECT).bin
-		openocd -f openocd/start_st-link_flash.cfg
-
 # End of user defines
 ##############################################################################
 
 RULESPATH = $(CHIBIOS)/os/common/startup/ARMCMx/compilers/GCC/mk
 include $(RULESPATH)/rules.mk
+
+# make target for also uploading the board, called by make upload
+upload: build/$(PROJECT).bin
+		openocd -f openocd/start_st-link_flash.cfg

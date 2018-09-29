@@ -404,34 +404,6 @@
 #endif
 
 /**
- * @brief   ADC clock setting.
- */
-#if !defined(STM32_ADC_CLOCK_ENABLED) || defined(__DOXYGEN__)
-#define STM32_ADC_CLOCK_ENABLED             TRUE
-#endif
-
-/**
- * @brief   USB clock setting.
- */
-#if !defined(STM32_USB_CLOCK_ENABLED) || defined(__DOXYGEN__)
-#define STM32_USB_CLOCK_ENABLED             TRUE
-#endif
-
-/**
- * @brief   SAI1 clock setting.
- */
-#if !defined(STM32_SAI1_CLOCK_ENABLED) || defined(__DOXYGEN__)
-#define STM32_SAI1_CLOCK_ENABLED            TRUE
-#endif
-
-/**
- * @brief   SAI2 clock setting.
- */
-#if !defined(STM32_SAI2_CLOCK_ENABLED) || defined(__DOXYGEN__)
-#define STM32_SAI2_CLOCK_ENABLED            TRUE
-#endif
-
-/**
  * @brief   MSI frequency setting.
  */
 #if !defined(STM32_MSIRANGE) || defined(__DOXYGEN__)
@@ -764,7 +736,7 @@
  * @brief   DFSDMSEL value (DFSDM clock source).
  */
 #if !defined(STM32_DFSDMSEL) || defined(__DOXYGEN__)
-#define STM32_DFSDMSEL                      STM32_DFSDMSEL_PCLK1
+#define STM32_DFSDMSEL                      STM32_DFSDMSEL_PCLK2
 #endif
 
 /**
@@ -784,6 +756,22 @@
  */
 #if !defined(STM32L4xx_MCUCONF)
 #error "Using a wrong mcuconf.h file, STM32L4xx_MCUCONF not defined"
+#endif
+
+/* Only some devices have strongly checked mcuconf.h files. Others will be
+   added gradually.*/
+#if defined(STM32L432xx) && !defined(STM32L432_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32L432_MCUCONF not defined"
+
+#elif defined(STM32L476xx) && !defined(STM32L476_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32L476_MCUCONF not defined"
+
+#elif defined(STM32L496xx) && !defined(STM32L496_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32L496_MCUCONF not defined"
+
+#elif defined(STM32L4A6xx) && !defined(STM32L4A6_MCUCONF)
+#error "Using a wrong mcuconf.h file, STM32L4A6_MCUCONF not defined"
+
 #endif
 
 /*

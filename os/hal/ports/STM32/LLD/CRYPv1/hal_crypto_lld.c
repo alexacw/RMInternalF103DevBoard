@@ -35,7 +35,7 @@
 /*===========================================================================*/
 
 /** @brief CRY1 driver identifier.*/
-#if STM32_CRY_USE_CRYP1 || defined(__DOXYGEN__)
+#if (STM32_CRY_ENABLED1 == TRUE) || defined(__DOXYGEN__)
 CRYDriver CRYD1;
 #endif
 
@@ -62,6 +62,18 @@ CRYDriver CRYD1;
  */
 void cry_lld_init(void) {
 
+#if STM32_CRY_ENABLED1
+  cryObjectInit(&CRYD1);
+#if STM32_CRY_USE_CRYP1
+  CRYD1.cryp = CRYP;
+#endif
+#if STM32_CRY_USE_HASH1
+  CRYD1.hash = HASH;
+#endif
+#if STM32_CRY_USE_RNG1
+  CRYD1.rng  = RNG;
+#endif
+#endif
 }
 
 /**
@@ -74,8 +86,30 @@ void cry_lld_init(void) {
 void cry_lld_start(CRYDriver *cryp) {
 
   if (cryp->state == CRY_STOP) {
-
+#if STM32_CRY_ENABLED1
+    if (&CRYD1 == cryp) {
+#if STM32_CRY_USE_CRYP1
+      rccEnableCRYP(true);
+#endif
+#if STM32_CRY_USE_HASH1
+      rccEnableHASH(true);
+#endif
+#if STM32_CRY_USE_RNG1
+      rccEnableRNG(true);
+#endif
+    }
+#endif
   }
+
+#if STM32_CRY_USE_CRYP1
+    /* CRYP setup and enable.*/
+#endif
+#if STM32_CRY_USE_HASH1
+    /* HASH setup and enable.*/
+#endif
+#if STM32_CRY_USE_RNG1
+    /* RNG setup and enable.*/
+#endif
 }
 
 /**
@@ -89,6 +123,29 @@ void cry_lld_stop(CRYDriver *cryp) {
 
   if (cryp->state == CRY_READY) {
 
+#if STM32_CRY_USE_CRYP1
+    /* CRYP disable.*/
+#endif
+#if STM32_CRY_USE_HASH1
+    /* HASH disable.*/
+#endif
+#if STM32_CRY_USE_RNG1
+    /* RNG disable.*/
+#endif
+
+#if STM32_CRY_ENABLED1
+    if (&CRYD1 == cryp) {
+#if STM32_CRY_USE_CRYP1
+      rccDisableCRYP();
+#endif
+#if STM32_CRY_USE_HASH1
+      rccDisableHASH();
+#endif
+#if STM32_CRY_USE_RNG1
+      rccDisableRNG();
+#endif
+    }
+#endif
   }
 }
 
@@ -1314,7 +1371,8 @@ cryerror_t cry_lld_HMACSHA512_final(CRYDriver *cryp,
  * @brief   True random numbers generator.
  *
  * @param[in] cryp              pointer to the @p CRYDriver object
- * @param[out] out              128 bits output buffer
+ * @param[in] size              size of output buffer
+ * @param[out] out              output buffer
  * @return                      The operation status.
  * @retval CRY_NOERROR          if the operation succeeded.
  * @retval CRY_ERR_INV_ALGO     if the operation is unsupported on this
@@ -1324,9 +1382,10 @@ cryerror_t cry_lld_HMACSHA512_final(CRYDriver *cryp,
  *
  * @notapi
  */
-cryerror_t cry_lld_TRNG(CRYDriver *cryp, uint8_t *out) {
+cryerror_t cry_lld_TRNG(CRYDriver *cryp, size_t size, uint8_t *out) {
 
   (void)cryp;
+  (void)size;
   (void)out;
 
   return CRY_ERR_INV_ALGO;

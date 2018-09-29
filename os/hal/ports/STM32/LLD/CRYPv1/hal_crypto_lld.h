@@ -31,27 +31,6 @@
 /* Driver constants.                                                         */
 /*===========================================================================*/
 
-/**
- * @name    Driver capability switches
- * @{
- */
-#define CRY_LLD_SUPPORTS_AES                TRUE
-#define CRY_LLD_SUPPORTS_AES_ECB            TRUE
-#define CRY_LLD_SUPPORTS_AES_CBC            TRUE
-#define CRY_LLD_SUPPORTS_AES_CFB            TRUE
-#define CRY_LLD_SUPPORTS_AES_CTR            TRUE
-#define CRY_LLD_SUPPORTS_AES_GCM            TRUE
-#define CRY_LLD_SUPPORTS_DES                TRUE
-#define CRY_LLD_SUPPORTS_DES_ECB            TRUE
-#define CRY_LLD_SUPPORTS_DES_CBC            TRUE
-#define CRY_LLD_SUPPORTS_SHA1               TRUE
-#define CRY_LLD_SUPPORTS_SHA256             TRUE
-#define CRY_LLD_SUPPORTS_SHA512             TRUE
-#define CRY_LLD_SUPPORTS_HMAC_SHA256        TRUE
-#define CRY_LLD_SUPPORTS_HMAC_SHA512        TRUE
-#define CRY_LLD_SUPPORTS_TRNG               TRUE
-/** @} */
-
 /*===========================================================================*/
 /* Driver pre-compile time settings.                                         */
 /*===========================================================================*/
@@ -61,18 +40,116 @@
  * @{
  */
 /**
- * @brief   CRY1 driver enable switch.
+ * @brief   CRYP1 driver enable switch.
  * @details If set to @p TRUE the support for CRYP1 is included.
  * @note    The default is @p FALSE.
  */
 #if !defined(STM32_CRY_USE_CRYP1) || defined(__DOXYGEN__)
 #define STM32_CRY_USE_CRYP1                 FALSE
 #endif
+
+/**
+ * @brief   HASH1 driver enable switch.
+ * @details If set to @p TRUE the support for CRYP1 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_CRY_USE_HASH1) || defined(__DOXYGEN__)
+#define STM32_CRY_USE_HASH1                 FALSE
+#endif
+
+/**
+ * @brief   RNG1 driver enable switch.
+ * @details If set to @p TRUE the support for CRYP1 is included.
+ * @note    The default is @p FALSE.
+ */
+#if !defined(STM32_CRY_USE_RNG1) || defined(__DOXYGEN__)
+#define STM32_CRY_USE_RNG1                  FALSE
+#endif
 /** @} */
 
 /*===========================================================================*/
 /* Derived constants and error checks.                                       */
 /*===========================================================================*/
+
+#if (STM32_CRY_USE_CRYP1 == TRUE) || (STM32_CRY_USE_HASH1 == TRUE) ||       \
+    (STM32_CRY_USE_RNG1 == TRUE)  || defined (__DOXYGEN__)
+#define STM32_CRY_ENABLED1                  TRUE
+#else
+#define STM32_CRY_ENABLED1                  FALSE
+#endif
+
+#if !defined (STM32_HAS_CRYP1)
+#define STM32_HAS_CRYP1                     FALSE
+#endif
+
+#if !defined (STM32_HAS_HASH1)
+#define STM32_HAS_HASH1                     FALSE
+#endif
+
+#if !defined (STM32_HAS_RNG1)
+#define STM32_HAS_RNG1                      FALSE
+#endif
+
+#if STM32_CRY_USE_CRYP1 && !STM32_HAS_CRYP1
+#error "CRYP1 not present in the selected device"
+#endif
+
+#if STM32_CRY_USE_HASH1 && !STM32_HAS_HASH1
+#error "HASH1 not present in the selected device"
+#endif
+
+#if STM32_CRY_USE_RNG1 && !STM32_HAS_RNG1
+#error "RNG1 not present in the selected device"
+#endif
+
+#if !STM32_CRY_ENABLED1
+#error "CRY driver activated but no CRYP or HASH or RNG peripheral assigned"
+#endif
+
+/**
+ * @name    Driver capability switches
+ * @{
+ */
+#if STM32_CRY_USE_CRYP1 || defined (__DOXYGEN__)
+#define CRY_LLD_SUPPORTS_AES                TRUE
+#define CRY_LLD_SUPPORTS_AES_ECB            TRUE
+#define CRY_LLD_SUPPORTS_AES_CBC            TRUE
+#define CRY_LLD_SUPPORTS_AES_CFB            TRUE
+#define CRY_LLD_SUPPORTS_AES_CTR            TRUE
+#define CRY_LLD_SUPPORTS_AES_GCM            TRUE
+#define CRY_LLD_SUPPORTS_DES                TRUE
+#define CRY_LLD_SUPPORTS_DES_ECB            TRUE
+#define CRY_LLD_SUPPORTS_DES_CBC            TRUE
+#else
+#define CRY_LLD_SUPPORTS_AES                FALSE
+#define CRY_LLD_SUPPORTS_AES_ECB            FALSE
+#define CRY_LLD_SUPPORTS_AES_CBC            FALSE
+#define CRY_LLD_SUPPORTS_AES_CFB            FALSE
+#define CRY_LLD_SUPPORTS_AES_CTR            FALSE
+#define CRY_LLD_SUPPORTS_AES_GCM            FALSE
+#define CRY_LLD_SUPPORTS_DES                FALSE
+#define CRY_LLD_SUPPORTS_DES_ECB            FALSE
+#define CRY_LLD_SUPPORTS_DES_CBC            FALSE
+#endif
+#if STM32_CRY_USE_HASH1 || defined (__DOXYGEN__)
+#define CRY_LLD_SUPPORTS_SHA1               TRUE
+#define CRY_LLD_SUPPORTS_SHA256             TRUE
+#define CRY_LLD_SUPPORTS_SHA512             TRUE
+#define CRY_LLD_SUPPORTS_HMAC_SHA256        TRUE
+#define CRY_LLD_SUPPORTS_HMAC_SHA512        TRUE
+#else
+#define CRY_LLD_SUPPORTS_SHA1               FALSE
+#define CRY_LLD_SUPPORTS_SHA256             FALSE
+#define CRY_LLD_SUPPORTS_SHA512             FALSE
+#define CRY_LLD_SUPPORTS_HMAC_SHA256        FALSE
+#define CRY_LLD_SUPPORTS_HMAC_SHA512        FALSE
+#endif
+#if STM32_CRY_USE_RNG1 || defined (__DOXYGEN__)
+#define CRY_LLD_SUPPORTS_TRNG               TRUE
+#else
+#define CRY_LLD_SUPPORTS_TRNG               FALSE
+#endif
+/** @} */
 
 /*===========================================================================*/
 /* Driver data structures and types.                                         */
@@ -108,24 +185,28 @@ struct CRYDriver {
    * @brief   Current configuration data.
    */
   const CRYConfig           *config;
-  /**
-   * @brief   Algorithm type of transient key.
-   */
-  cryalgorithm_t            key0_type;
-  /**
-   * @brief   Size of transient key.
-   */
-  size_t                    key0_size;
-#if (HAL_CRY_USE_FALLBACK == TRUE) || defined(__DOXYGEN__)
-  /**
-   * @brief   Key buffer for the fall-back implementation.
-   */
-  uint8_t                   key0_buffer[HAL_CRY_MAX_KEY_SIZE];
-#endif
 #if defined(CRY_DRIVER_EXT_FIELDS)
   CRY_DRIVER_EXT_FIELDS
 #endif
   /* End of the mandatory fields.*/
+#if STM32_CRY_USE_CRYP1 || defined (__DOXYGEN__)
+  /**
+   * @brief   Pointer to the CRYP registers block.
+   */
+  CRYP_TypeDef              *cryp;
+#endif
+#if STM32_CRY_USE_HASH1 || defined (__DOXYGEN__)
+  /**
+   * @brief   Pointer to the HASH registers block.
+   */
+  HASH_TypeDef              *hash;
+#endif
+#if STM32_CRY_USE_RNG1 || defined (__DOXYGEN__)
+  /**
+   * @brief   Pointer to the RNG registers block.
+   */
+  RNG_TypeDef               *rng;
+#endif
 };
 
 #if (CRY_LLD_SUPPORTS_SHA1 == TRUE) || defined(__DOXYGEN__)
@@ -181,7 +262,7 @@ typedef struct {
 /* External declarations.                                                    */
 /*===========================================================================*/
 
-#if (STM32_CRY_USE_CRYP1 == TRUE) && !defined(__DOXYGEN__)
+#if (STM32_CRY_ENABLED1 == TRUE) && !defined(__DOXYGEN__)
 extern CRYDriver CRYD1;
 #endif
 
@@ -357,7 +438,7 @@ extern "C" {
                                       uint8_t *out);
 #endif
 #if (CRY_LLD_SUPPORTS_TRNG == TRUE) || defined(__DOXYGEN__)
-  cryerror_t cry_lld_TRNG(CRYDriver *cryp, uint8_t *out);
+  cryerror_t cry_lld_TRNG(CRYDriver *cryp, size_t size, uint8_t *out);
 #endif
 #ifdef __cplusplus
 }

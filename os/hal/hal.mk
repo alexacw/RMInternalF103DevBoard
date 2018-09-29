@@ -68,8 +68,14 @@ endif
 ifneq ($(findstring HAL_USE_SERIAL_USB TRUE,$(HALCONF)),)
 HALSRC += $(CHIBIOS)/os/hal/src/hal_serial_usb.c
 endif
+ifneq ($(findstring HAL_USE_SIO TRUE,$(HALCONF)),)
+HALSRC += $(CHIBIOS)/os/hal/src/hal_sio.c
+endif
 ifneq ($(findstring HAL_USE_SPI TRUE,$(HALCONF)),)
 HALSRC += $(CHIBIOS)/os/hal/src/hal_spi.c
+endif
+ifneq ($(findstring HAL_USE_TRNG TRUE,$(HALCONF)),)
+HALSRC += $(CHIBIOS)/os/hal/src/hal_trng.c
 endif
 ifneq ($(findstring HAL_USE_UART TRUE,$(HALCONF)),)
 HALSRC += $(CHIBIOS)/os/hal/src/hal_uart.c
@@ -106,8 +112,10 @@ HALSRC = $(CHIBIOS)/os/hal/src/hal.c \
          $(CHIBIOS)/os/hal/src/hal_sdc.c \
          $(CHIBIOS)/os/hal/src/hal_serial.c \
          $(CHIBIOS)/os/hal/src/hal_serial_usb.c \
+         $(CHIBIOS)/os/hal/src/hal_sio.c \
          $(CHIBIOS)/os/hal/src/hal_spi.c \
          $(CHIBIOS)/os/hal/src/hal_st.c \
+         $(CHIBIOS)/os/hal/src/hal_trng.c \
          $(CHIBIOS)/os/hal/src/hal_uart.c \
          $(CHIBIOS)/os/hal/src/hal_usb.c \
          $(CHIBIOS)/os/hal/src/hal_wdg.c \
