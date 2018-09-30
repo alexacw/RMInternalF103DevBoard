@@ -11,14 +11,17 @@
 #include "main.hpp"
 #include <stdio.h>
 #include <stdlib.h>
+#include "flash.hpp"
 
 namespace UserShell
 {
 
+static thread_t *shellThdP = NULL;
 //forward declaration of shell functions
 void shellTestPrint(BaseSequentialStream *chp, int argc, char *argv[]);
 void setCurrent(BaseSequentialStream *chp, int argc, char *argv[]);
 void toggleLog(BaseSequentialStream *chp, int argc, char *argv[]);
+void testRead(BaseSequentialStream *chp, int argc, char *argv[]);
 
 const ShellCommand commands[] =
     {
@@ -40,14 +43,14 @@ void initShell()
 {
     sdStart(&SHELL_SD, &shellSDConfig);
     shellInit();
-    thread_t *a_thread_pointer =
+    shellThdP =
         chThdCreateStatic(&shell_wa,
                           sizeof(shell_wa),
                           NORMALPRIO + 1,
                           shellThread,
                           (void *)&shell_cfg1);
 
-    chRegSetThreadNameX(a_thread_pointer,
+    chRegSetThreadNameX(shellThdP,
                         "shell");
 }
 

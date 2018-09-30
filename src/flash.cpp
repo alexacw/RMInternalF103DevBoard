@@ -16,11 +16,16 @@
 
 #define FlASH_START_ADDRESS (0x08000000U + (FLASH_TOTAL_PAGE_COUNT - FLASH_STORAGE_PAGE_COUNT) * FLASH_PAGE_SIZE)
 
-#define flashWaitWhileBusy()         \
-	while (FLASH->SR & FLASH_SR_BSY) \
+inline void flashWaitWhileBusy()
+{
+	while (FLASH->SR & FLASH_SR_BSY)
 		chThdSleep(1);
+}
 
-#define flashLock() FLASH->CR |= FLASH_CR_LOCK;
+inline void flashLock()
+{
+	FLASH->CR |= FLASH_CR_LOCK;
+}
 
 static void flashUnlock(void)
 {
@@ -78,7 +83,8 @@ bool flashStorage::writeFlashAll()
 	//handle the 1 byte not programmed
 	if (sizeof(content) % 2)
 	{
-		*(uint8_t *)flashPtr = *(uint8_t *)dataPtr;
+		uint16_t temp = *(uint8_t *)dataPtr;
+		*flashPtr = temp;
 		flashWaitWhileBusy();
 	}
 

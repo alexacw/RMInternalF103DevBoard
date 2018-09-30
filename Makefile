@@ -126,7 +126,8 @@ CPPSRC = $(ALLCPPSRC) \
 		./src/morseCode.cpp \
 		./src/button.cpp \
 		./src/CanBusHandler.cpp \
-		./src/DR16.cpp
+		./src/DR16.cpp \
+		./src/flash.cpp
 		
 
 # C sources to be compiled in ARM mode regardless of the global setting.
