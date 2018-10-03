@@ -85,6 +85,9 @@
 #define LINE_LED PAL_LINE(GPIOA, GPIOA_LED)
 #define LINE_BUTTON PAL_LINE(GPIOA, GPIOA_BUTTON)
 
+#define LED_PWM_DRIVER PWMD1
+#define LED_PWM_CHANNEL 0
+
 /*
 following refer to stm32f1 reference manual section 9.1
 */

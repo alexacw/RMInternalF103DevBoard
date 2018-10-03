@@ -29,6 +29,14 @@ struct flashStorageContent_t
 
 extern flashStorageContent_t content;
 
-bool writeFlashAll();
-bool readFlashAll();
+/**
+ * @brief 
+ * store all content to the flash, return sucess status
+ */
+bool store();
+
+/**
+ * @brief read all data from flash to content, return sucess status
+ */
+bool read();
 } // namespace flashStorage

@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "flash.hpp"
+#include "morseCode.hpp"
+#include "PWM_Ctrl.hpp"
 
 namespace UserShell
 {
@@ -22,12 +24,14 @@ void shellTestPrint(BaseSequentialStream *chp, int argc, char *argv[]);
 void setCurrent(BaseSequentialStream *chp, int argc, char *argv[]);
 void toggleLog(BaseSequentialStream *chp, int argc, char *argv[]);
 void testRead(BaseSequentialStream *chp, int argc, char *argv[]);
+void toggleLEDMode(BaseSequentialStream *chp, int argc, char *argv[]);
 
 const ShellCommand commands[] =
     {
         {"testPrint", shellTestPrint},
         {"sc", setCurrent},
         {"tl", toggleLog},
+        {"led", toggleLEDMode},
         {NULL, NULL}};
 
 static const SerialConfig shellSDConfig =
@@ -79,6 +83,22 @@ void toggleLog(BaseSequentialStream *chp, int argc, char *argv[])
     (void)argc;
     (void)argv;
     enable_logging = !enable_logging;
+};
+
+void toggleLEDMode(BaseSequentialStream *chp, int argc, char *argv[])
+{
+    static bool isbreath = true;
+    if (isbreath)
+    {
+        PWM_Ctrl::stopBreathLight();
+        MorseCode::start();
+    }
+    else
+    {
+        PWM_Ctrl::startBreathLight();
+        MorseCode::stop();
+    }
+    isbreath = ~isbreath;
 };
 
 } // namespace UserShell

@@ -33,6 +33,7 @@
 #include "morseCode.hpp"
 #include "CanBusHandler.hpp"
 #include "DR16.hpp"
+#include "PWM_Ctrl.hpp"
 
 using namespace chibios_rt;
 
@@ -57,7 +58,8 @@ int main(void)
 
   UserShell::initShell();
   Button::buttonStart();
-  MorseCode::morseCodeStart();
+  // MorseCode::start();
+  PWM_Ctrl::startBreathLight();
   CanBusHandler::start();
   DR16::start();
 

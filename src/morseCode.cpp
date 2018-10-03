@@ -92,8 +92,24 @@ class MorseCodeThd : public BaseStaticThread<64>
 
 static MorseCodeThd thd(str);
 
-void morseCodeStart()
+chibios_rt::ThreadReference thdRef = NULL;
+
+void start()
 {
-    thd.start(NORMALPRIO);
+    palSetLineMode(LINE_LED, PAL_MODE_OUTPUT_OPENDRAIN);
+    if (thdRef.isNull())
+    {
+        thdRef = thd.start(NORMALPRIO);
+    }
 };
+
+void stop()
+{
+    if (!thdRef.isNull())
+    {
+        thdRef.requestTerminate();
+        thdRef.wait();
+    }
+};
+
 } // namespace MorseCode

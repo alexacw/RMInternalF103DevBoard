@@ -6,5 +6,6 @@
 namespace MorseCode
 {
 
-void morseCodeStart();
+void start();
+void stop();
 } // namespace MorseCode

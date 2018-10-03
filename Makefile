@@ -127,7 +127,8 @@ CPPSRC = $(ALLCPPSRC) \
 		./src/button.cpp \
 		./src/CanBusHandler.cpp \
 		./src/DR16.cpp \
-		./src/flash.cpp
+		./src/flash.cpp \
+    ./src/PWM_Ctrl.cpp
 		
 
 # C sources to be compiled in ARM mode regardless of the global setting.
