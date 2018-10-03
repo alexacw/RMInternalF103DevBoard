@@ -29,13 +29,13 @@ class BreathLightThd : public BaseStaticThread<64>
         {
             if (LED_PWM_DRIVER.tim->CCR[LED_PWM_CHANNEL] == 0)
                 increasing = true;
-            else if (LED_PWM_DRIVER.tim->CCR[LED_PWM_CHANNEL] == PWM1_PERIOD)
+            else if (LED_PWM_DRIVER.tim->CCR[LED_PWM_CHANNEL] >= PWM1_PERIOD)
                 increasing = false;
 
             if (increasing)
-                LED_PWM_DRIVER.tim->CCR[LED_PWM_CHANNEL]++;
+                LED_PWM_DRIVER.tim->CCR[LED_PWM_CHANNEL] += 3;
             else
-                LED_PWM_DRIVER.tim->CCR[LED_PWM_CHANNEL]--;
+                LED_PWM_DRIVER.tim->CCR[LED_PWM_CHANNEL] -= 3;
             this->sleep(TIME_MS2I(1));
         }
     }

@@ -45,8 +45,8 @@ static UARTConfig uart_cfg = {
 	USART_CR2_LBDL,				 //10 bit break detection
 	0};
 
-static THD_WORKING_AREA(DR16_receiver_thread_wa, 256);
-static THD_FUNCTION(DR16_receiver_thread, p)
+static THD_WORKING_AREA(DR16RxThd_wa, 256);
+static THD_FUNCTION(DR16RxThd, p)
 {
 	(void)p;
 	chRegSetThreadName("DR16RxThd");
@@ -85,10 +85,10 @@ void start(void)
 
 	uartStart(&DR16_UART_DRIVER, &uart_cfg);
 
-	chThdCreateStatic(DR16_receiver_thread_wa,
-					  sizeof(DR16_receiver_thread_wa),
+	chThdCreateStatic(DR16RxThd_wa,
+					  sizeof(DR16RxThd_wa),
 					  NORMALPRIO + 7,
-					  DR16_receiver_thread,
+					  DR16RxThd,
 					  NULL);
 }
 } // namespace DR16

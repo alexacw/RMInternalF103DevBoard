@@ -87,18 +87,23 @@ void toggleLog(BaseSequentialStream *chp, int argc, char *argv[])
 
 void toggleLEDMode(BaseSequentialStream *chp, int argc, char *argv[])
 {
+    (void) argc;
+    (void) argv;
     static bool isbreath = true;
     if (isbreath)
     {
+        chprintf(chp,"switching to morse code\r\n");
         PWM_Ctrl::stopBreathLight();
         MorseCode::start();
     }
     else
     {
-        PWM_Ctrl::startBreathLight();
+        chprintf(chp,"switching to BreathLight\r\n");
         MorseCode::stop();
+        chprintf(chp,"stoped\r\n");
+        PWM_Ctrl::startBreathLight();
     }
-    isbreath = ~isbreath;
+    isbreath = !isbreath;
 };
 
 } // namespace UserShell

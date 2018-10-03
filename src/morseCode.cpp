@@ -7,6 +7,8 @@ namespace MorseCode
 
 const char str[] = "champion";
 
+event_source_t userIntperrupt;
+
 //morse code from a to z
 const char *code[] =
     {".-", "-...", "-.-.", "-..", ".",     //abcde
@@ -30,14 +32,18 @@ class MorseCodeThd : public BaseStaticThread<64>
         bool was_interrupted = false;
         const char *current_char_ptr = c_str;
         chEvtRegister(&Button::ButtonPressedEvt, &buttonLis, 0);
+        chEvtRegister(&userIntperrupt, &userLis, 1);
 
-        while (!BaseThread::shouldTerminate())
+        while (!this->shouldTerminate())
         {
             palWriteLine(LINE_LED, ~LED_ON_STATE);
             chThdSleepMilliseconds(200);
 
             if (!was_interrupted)
-                chEvtWaitAny(EVENT_MASK(0)); //wait for button press
+                //wait for button press, break if user request to turn off
+                if (chEvtWaitAny(ALL_EVENTS) == EVENT_MASK(1))
+                    break;
+
             was_interrupted = false;
 
             if (*current_char_ptr == '\0') //check whole string complete
@@ -72,10 +78,10 @@ class MorseCodeThd : public BaseStaticThread<64>
                     continue; // not dash or dot?? probably wont happen anyway
                 }
                 palWriteLine(LINE_LED, LED_ON_STATE);
-                if ((was_interrupted = chEvtWaitAnyTimeout(EVENT_MASK(0), TIME_MS2I(delayms))))
+                if ((was_interrupted = chEvtWaitAnyTimeout(ALL_EVENTS, TIME_MS2I(delayms))))
                     break;
                 palWriteLine(LINE_LED, ~LED_ON_STATE);
-                if ((was_interrupted = chEvtWaitAnyTimeout(EVENT_MASK(0), TIME_MS2I(250))))
+                if ((was_interrupted = chEvtWaitAnyTimeout(ALL_EVENTS, TIME_MS2I(250))))
                     break;
             }
 
@@ -83,16 +89,23 @@ class MorseCodeThd : public BaseStaticThread<64>
         }
 
         chEvtUnregister(&Button::ButtonPressedEvt, &buttonLis);
+        chEvtUnregister(&userIntperrupt, &userLis);
     }
 
   private:
     const char *c_str;
-    event_listener buttonLis;
+    event_listener_t buttonLis;
+    event_listener_t userLis;
 };
 
 static MorseCodeThd thd(str);
 
 chibios_rt::ThreadReference thdRef = NULL;
+
+void init()
+{
+    chEvtObjectInit(&userIntperrupt);
+};
 
 void start()
 {
@@ -108,6 +121,7 @@ void stop()
     if (!thdRef.isNull())
     {
         thdRef.requestTerminate();
+        chEvtBroadcast(&userIntperrupt);
         thdRef.wait();
     }
 };

@@ -5,7 +5,7 @@
 
 namespace MorseCode
 {
-
+void init();
 void start();
 void stop();
 } // namespace MorseCode

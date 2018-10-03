@@ -58,7 +58,7 @@ int main(void)
 
   UserShell::initShell();
   Button::buttonStart();
-  // MorseCode::start();
+  MorseCode::init();
   PWM_Ctrl::startBreathLight();
   CanBusHandler::start();
   DR16::start();
