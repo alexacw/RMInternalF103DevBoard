@@ -9,25 +9,34 @@
 #include "stm32f1xx.h"
 
 //these must be unsigned
-#define FLASH_TOTAL_PAGE_COUNT 64U
-#define FLASH_STORAGE_PAGE_COUNT 8U
+#define FLASH_TOTAL_PAGE_COUNT 64U  //all pages the mcu have
+#define FLASH_STORAGE_PAGE_COUNT 8U //pages used for storing persistence data
 #define FLASH_PAGE_SIZE 1024U
-
-/**
- * @brief number of pages reserved at the end of flash memory for storing data
- * 
- */
 
 namespace flashStorage
 {
 
-//struct defining the storage structure
-struct flashStorageContent_t
+enum Dtype : uint8_t
 {
-    char testString[11];
+    dt_float,
+    dt_double,
+    dt_uint32,
+    dt_int32
 };
 
-extern flashStorageContent_t content;
+struct Record_t
+{
+    Dtype type;
+};
+
+//struct defining the storage structure
+struct staticContent_t
+{
+    char testString[11];
+    Record_t sdsd;
+};
+
+extern staticContent_t content;
 
 /**
  * @brief 

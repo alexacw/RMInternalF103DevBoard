@@ -14,6 +14,7 @@
 #include "flash.hpp"
 #include "morseCode.hpp"
 #include "PWM_Ctrl.hpp"
+#include "CRC.hpp"
 
 namespace UserShell
 {
@@ -25,6 +26,7 @@ void setCurrent(BaseSequentialStream *chp, int argc, char *argv[]);
 void toggleLog(BaseSequentialStream *chp, int argc, char *argv[]);
 void testRead(BaseSequentialStream *chp, int argc, char *argv[]);
 void toggleLEDMode(BaseSequentialStream *chp, int argc, char *argv[]);
+void calcrc(BaseSequentialStream *chp, int argc, char *argv[]);
 
 const ShellCommand commands[] =
     {
@@ -32,6 +34,7 @@ const ShellCommand commands[] =
         {"sc", setCurrent},
         {"tl", toggleLog},
         {"led", toggleLEDMode},
+        {"calcrc", &calcrc},
         {NULL, NULL}};
 
 static const SerialConfig shellSDConfig =
@@ -87,23 +90,37 @@ void toggleLog(BaseSequentialStream *chp, int argc, char *argv[])
 
 void toggleLEDMode(BaseSequentialStream *chp, int argc, char *argv[])
 {
-    (void) argc;
-    (void) argv;
+    (void)argc;
+    (void)argv;
     static bool isbreath = true;
     if (isbreath)
     {
-        chprintf(chp,"switching to morse code\r\n");
+        chprintf(chp, "switching to morse code\r\n");
         PWM_Ctrl::stopBreathLight();
         MorseCode::start();
     }
     else
     {
-        chprintf(chp,"switching to BreathLight\r\n");
+        chprintf(chp, "switching to BreathLight\r\n");
         MorseCode::stop();
-        chprintf(chp,"stoped\r\n");
+        chprintf(chp, "stoped\r\n");
         PWM_Ctrl::startBreathLight();
     }
     isbreath = !isbreath;
 };
+
+void calcrc(BaseSequentialStream *chp, int argc, char *argv[])
+{
+    if (argc == 1)
+    {
+        hw_crc32::reset();
+        uint32_t tempcrc = hw_crc32::calculate((uint8_t *)argv[0], strlen(argv[0]));
+        chprintf(chp,
+                 "len: %d\n"
+                 "crc: %x\n",
+                 strlen(argv[0]),
+                 tempcrc);
+    }
+}
 
 } // namespace UserShell

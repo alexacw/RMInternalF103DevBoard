@@ -6,7 +6,7 @@
 # Compiler options here.
 ifeq ($(USE_OPT),)
   USE_OPT = -O2 -ggdb -fomit-frame-pointer -falign-functions=16 --specs=nosys.specs \
-  -D SHELL_CONFIG_FILE
+  -D SHELL_CONFIG_FILE -D CHPRINTF_USE_FLOAT -D ARM_MATH_CM3
 endif
 
 # C specific options here (added to USE_OPT).
@@ -121,14 +121,16 @@ CSRC = $(ALLCSRC) \
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
 CPPSRC = $(ALLCPPSRC) \
-		./src/main.cpp\
-		./src/userShell.cpp \
-		./src/morseCode.cpp \
-		./src/button.cpp \
-		./src/CanBusHandler.cpp \
-		./src/DR16.cpp \
-		./src/flash.cpp \
-    ./src/PWM_Ctrl.cpp
+		./src/main.cpp \
+		userShell.cpp \
+		morseCode.cpp \
+		button.cpp \
+		CanBusHandler.cpp \
+		DR16.cpp \
+		flash.cpp \
+    PWM_Ctrl.cpp \
+    CRC.cpp \
+    OLED.cpp
 		
 
 # C sources to be compiled in ARM mode regardless of the global setting.
@@ -155,7 +157,7 @@ TCPPSRC =
 ASMSRC = $(ALLASMSRC)
 ASMXSRC = $(ALLXASMSRC)
 
-INCDIR = $(ALLINC) $(TESTINC) $(CONFDIR) ./src
+INCDIR = $(ALLINC) $(TESTINC) $(CONFDIR)
 
 #
 # Project, sources and paths
@@ -214,13 +216,14 @@ endif
 UADEFS =
 
 # List all user directories here
-UINCDIR =
+UINCDIR = ./src \
+          ./CMSIS/DSP/Include
 
 # List the user directory to look for the libraries here
-ULIBDIR =
+ULIBDIR = ./CMSIS/Lib/GCC
 
 # List all user libraries here
-ULIBS =
+ULIBS = -lm -larm_cortexM3l_math
 
 # End of user defines
 ##############################################################################

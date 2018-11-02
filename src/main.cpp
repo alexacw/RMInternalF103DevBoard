@@ -26,14 +26,19 @@
 #include "ch.h"
 #include "hal.h"
 
-#include "chprintf.h"
-#include "userShell.hpp"
+#include <math.h>
+#include "arm_math.h"
 
+#include "chprintf.h"
+
+#include "userShell.hpp"
 #include "button.hpp"
 #include "morseCode.hpp"
 #include "CanBusHandler.hpp"
 #include "DR16.hpp"
 #include "PWM_Ctrl.hpp"
+#include "CRC.hpp"
+#include "OLED.hpp"
 
 using namespace chibios_rt;
 
@@ -58,6 +63,7 @@ int main(void)
 
   UserShell::initShell();
   Button::buttonStart();
+  hw_crc32::init();
   MorseCode::init();
   PWM_Ctrl::startBreathLight();
   CanBusHandler::start();
@@ -74,6 +80,30 @@ int main(void)
     systime_t startT = chibios_rt::System::getTime();
 
     // ... something to be done every 1000 ms ...
+    /*
+    temp1 += 0.1;
+    temp2 = sin(temp1);
+    int i = temp2 / 0.1;
+    for (int j = -10; j < i; j++)
+      sdWrite(&SHELL_SD, (const uint8_t *)".", 1);
+
+    chprintf((BaseSequentialStream *)&SHELL_SD,
+             "float: %f\n", temp2);
+*/
+
+    arm_matrix_instance_f32 mat32f, mat32f2;
+    float32_t mat32fD[9] = {1, 0, 0, 0, 2, 0, 0, 0, 3};
+    arm_mat_init_f32(&mat32f, 3, 3, mat32fD);
+    float32_t mat32fD2[9];
+    arm_mat_init_f32(&mat32f2, 3, 3, mat32fD2);
+    arm_mat_inverse_f32(&mat32f, &mat32f2);
+    for (int i = 0; i < 9; i++)
+    {
+      chprintf((BaseSequentialStream *)&SHELL_SD,
+               "%f\n", mat32fD2[i]);
+    }
+    chprintf((BaseSequentialStream *)&SHELL_SD,
+             "\n\n\n\n\n");
 
     if (enable_logging)
     {
@@ -97,6 +127,6 @@ int main(void)
                  "\nDR16: remote not connected\n");
     }
     //this function will wait until 1000 ms is passed since startT
-    chibios_rt::BaseThread::sleepUntil(startT + TIME_MS2I(250));
+    chibios_rt::BaseThread::sleepUntil(startT + TIME_MS2I(1000));
   }
 }

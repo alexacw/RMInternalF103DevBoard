@@ -16,18 +16,21 @@
 
 #define FlASH_START_ADDRESS (0x08000000U + (FLASH_TOTAL_PAGE_COUNT - FLASH_STORAGE_PAGE_COUNT) * FLASH_PAGE_SIZE)
 
-inline void flashWaitWhileBusy()
+namespace flashStorage
+{
+
+inline void wait()
 {
 	while (FLASH->SR & FLASH_SR_BSY)
 		chThdSleep(1);
 }
 
-inline void flashLock()
+inline void lock()
 {
 	FLASH->CR |= FLASH_CR_LOCK;
 }
 
-static void flashUnlock(void)
+static void unlock(void)
 {
 	//check if locked
 	while (FLASH->CR & FLASH_CR_LOCK)
@@ -41,13 +44,13 @@ static void flashUnlock(void)
 	}
 }
 
-flashStorage::flashStorageContent_t flashStorage::content = {};
+staticContent_t content = {};
 
-bool flashStorage::store()
+bool store()
 {
-	flashUnlock();
+	unlock();
 
-	flashWaitWhileBusy();
+	wait();
 	//start page erase
 	FLASH->CR |= FLASH_CR_PER;
 
@@ -59,7 +62,7 @@ bool flashStorage::store()
 	{
 		FLASH->AR = (uint32_t)flashPtr;
 		FLASH->CR |= FLASH_CR_STRT;
-		flashWaitWhileBusy();
+		wait();
 		flashPtr += FLASH_PAGE_SIZE;
 	}
 
@@ -75,7 +78,7 @@ bool flashStorage::store()
 	for (int i = 0; i < dataCount; i++)
 	{
 		*flashPtr = *dataPtr;
-		flashWaitWhileBusy();
+		wait();
 		dataPtr++;
 		flashPtr++;
 	}
@@ -85,12 +88,12 @@ bool flashStorage::store()
 	{
 		uint16_t temp = *(uint8_t *)dataPtr;
 		*flashPtr = temp;
-		flashWaitWhileBusy();
+		wait();
 	}
 
 	FLASH->CR &= ~FLASH_CR_PG;
 
-	flashLock();
+	lock();
 
 	//verify content
 	if (memcmp((void *)FlASH_START_ADDRESS, &content, sizeof(content)))
@@ -99,11 +102,12 @@ bool flashStorage::store()
 		return true;
 };
 
-bool flashStorage::read()
+bool read()
 {
+	//TODO: verify centent with crc before performing action
 	if (*(char *)FlASH_START_ADDRESS != 0xff)
 	{
-		content = *(flashStorageContent_t *)FlASH_START_ADDRESS;
+		content = *(staticContent_t *)FlASH_START_ADDRESS;
 		return true;
 	}
 	else
@@ -112,3 +116,5 @@ bool flashStorage::read()
 		return false;
 	}
 };
+
+} // namespace flashStorage
