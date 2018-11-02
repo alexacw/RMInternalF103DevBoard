@@ -68,6 +68,8 @@ int main(void)
   PWM_Ctrl::startBreathLight();
   CanBusHandler::start();
   DR16::start();
+  OLED_Init();
+  OLED_Clear();
 
   /*
 	 * Normal main() thread activity
@@ -79,6 +81,7 @@ int main(void)
     //example for interval waiting instead of delays
     systime_t startT = chibios_rt::System::getTime();
 
+    OLED_ShowString(0, 0, "dfsd");
     // ... something to be done every 1000 ms ...
     /*
     temp1 += 0.1;
