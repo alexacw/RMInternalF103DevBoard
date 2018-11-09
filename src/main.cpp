@@ -78,21 +78,9 @@ int main(void)
 	 */
   while (true)
   {
+    OLED_ShowString(0, 0, "dfsdasasasafgdfgdfgdfgddfgdfgdfgdfdasdASDsdasdwsd");
     //example for interval waiting instead of delays
     systime_t startT = chibios_rt::System::getTime();
-
-    OLED_ShowString(0, 0, "dfsd");
-    // ... something to be done every 1000 ms ...
-    /*
-    temp1 += 0.1;
-    temp2 = sin(temp1);
-    int i = temp2 / 0.1;
-    for (int j = -10; j < i; j++)
-      sdWrite(&SHELL_SD, (const uint8_t *)".", 1);
-
-    chprintf((BaseSequentialStream *)&SHELL_SD,
-             "float: %f\n", temp2);
-*/
 
     arm_matrix_instance_f32 mat32f, mat32f2;
     float32_t mat32fD[9] = {1, 0, 0, 0, 2, 0, 0, 0, 3};
