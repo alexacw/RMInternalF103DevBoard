@@ -26,7 +26,8 @@
                 "${workspaceFolder}/os/hal/ports/STM32/LLD/USARTv1",
                 "${workspaceFolder}/os/various/shell",
                 "${workspaceFolder}/os/hal/lib/streams",
-                "/home/acw/Desktop/CMSIS_5/CMSIS/DSP/Include"
+                "/home/acw/Desktop/CMSIS_5/CMSIS/DSP/Include",
+                "${workspaceFolder}/CMSIS/DSP/Include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",

@@ -88,6 +88,12 @@
 #define LED_PWM_DRIVER PWMD1
 #define LED_PWM_CHANNEL 0
 
+#define OLED_SCLK_LINE PAL_LINE(GPIOB, 12)
+#define OLED_SDIN_LINE PAL_LINE(GPIOB, 13)
+#define OLED_RST_LINE PAL_LINE(GPIOC, 15)
+#define OLED_DC_LINE PAL_LINE(GPIOC, 14)
+
+
 /*
 following refer to stm32f1 reference manual section 9.1
 */

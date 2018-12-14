@@ -9,6 +9,8 @@ const char str[] = "champion";
 
 event_source_t userIntperrupt;
 
+static bool enabled = false;
+
 //morse code from a to z
 const char *code[] =
     {".-", "-...", "-.-.", "-..", ".",     //abcde
@@ -104,25 +106,33 @@ chibios_rt::ThreadReference thdRef = NULL;
 
 void init()
 {
+    enabled = true;
     chEvtObjectInit(&userIntperrupt);
 };
 
 void start()
 {
-    palSetLineMode(LINE_LED, PAL_MODE_OUTPUT_OPENDRAIN);
-    if (thdRef.isNull())
+    if (enabled)
     {
-        thdRef = thd.start(NORMALPRIO);
+
+        palSetLineMode(LINE_LED, PAL_MODE_OUTPUT_OPENDRAIN);
+        if (thdRef.isNull())
+        {
+            thdRef = thd.start(NORMALPRIO);
+        }
     }
 };
 
 void stop()
 {
-    if (!thdRef.isNull())
+    if (enabled)
     {
-        thdRef.requestTerminate();
-        chEvtBroadcast(&userIntperrupt);
-        thdRef.wait();
+        if (!thdRef.isNull())
+        {
+            thdRef.requestTerminate();
+            chEvtBroadcast(&userIntperrupt);
+            thdRef.wait();
+        }
     }
 };
 

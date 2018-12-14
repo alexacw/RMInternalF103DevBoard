@@ -39,11 +39,16 @@
 #include "PWM_Ctrl.hpp"
 #include "CRC.hpp"
 #include "OLED.hpp"
+#include "MPU6050.h"
+#include "i2cdev_chibi.h"
 
 using namespace chibios_rt;
 
 //global variables
 volatile bool enable_logging = false;
+
+const I2CConfig I2CD2cfg =
+    {OPMODE_I2C, 400000U, FAST_DUTY_CYCLE_2};
 
 /*
  * Application entry point.
@@ -64,13 +69,23 @@ int main(void)
   UserShell::initShell();
   Button::buttonStart();
   hw_crc32::init();
-  MorseCode::init();
+  // MorseCode::init();
   PWM_Ctrl::startBreathLight();
   CanBusHandler::start();
   DR16::start();
   OLED_Init();
   OLED_Clear();
 
+  OLED_ShowString(10, 0, "Hello World!", false);
+  OLED_ShowString(10, 1, "Hello World!", false);
+  OLED_ShowString(10, 2, "Hello World!", false);
+  OLED_ShowString(10, 3, "Hello World!", false);
+  OLED_ShowString(10, 4, "Fuck this World!", false);
+
+  i2cStart(&I2CD2, &I2CD2cfg);
+  MPU6050(MPU6050_ADDRESS_AD0_LOW);
+  MPUinitialize();
+  int16_t ax, ay, az;
   /*
 	 * Normal main() thread activity
    * since this is doing nothing, you can just call "return 0;" here
@@ -78,24 +93,8 @@ int main(void)
 	 */
   while (true)
   {
-    OLED_ShowString(0, 0, "dfsdasasasafgdfgdfgdfgddfgdfgdfgdfdasdASDsdasdwsd");
     //example for interval waiting instead of delays
     systime_t startT = chibios_rt::System::getTime();
-
-    arm_matrix_instance_f32 mat32f, mat32f2;
-    float32_t mat32fD[9] = {1, 0, 0, 0, 2, 0, 0, 0, 3};
-    arm_mat_init_f32(&mat32f, 3, 3, mat32fD);
-    float32_t mat32fD2[9];
-    arm_mat_init_f32(&mat32f2, 3, 3, mat32fD2);
-    arm_mat_inverse_f32(&mat32f, &mat32f2);
-    for (int i = 0; i < 9; i++)
-    {
-      chprintf((BaseSequentialStream *)&SHELL_SD,
-               "%f\n", mat32fD2[i]);
-    }
-    chprintf((BaseSequentialStream *)&SHELL_SD,
-             "\n\n\n\n\n");
-
     if (enable_logging)
     {
       chprintf((BaseSequentialStream *)&SHELL_SD,
@@ -116,6 +115,19 @@ int main(void)
       else
         chprintf((BaseSequentialStream *)&SHELL_SD,
                  "\nDR16: remote not connected\n");
+
+      if (MPUtestConnection())
+      {
+        MPUgetAcceleration(&ax, &ay, &az);
+        chprintf((BaseSequentialStream *)&SHELL_SD,
+                 "\nMPU: ax = %f\t ay = %f\t az = %f\t\n",
+                 ax / 16385.0, ay / 16385.0, az / 16385.0);
+      }
+      else
+      {
+        chprintf((BaseSequentialStream *)&SHELL_SD,
+                 "\nMPU6050 not connected\n");
+      }
     }
     //this function will wait until 1000 ms is passed since startT
     chibios_rt::BaseThread::sleepUntil(startT + TIME_MS2I(1000));

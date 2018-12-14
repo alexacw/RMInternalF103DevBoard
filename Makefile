@@ -116,7 +116,9 @@ LDSCRIPT = ./STM32F103x8.ld
 # C sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.
 CSRC = $(ALLCSRC) \
-	   $(TESTSRC)
+	   $(TESTSRC) \
+     MPU6050.c \
+     i2cdev_chibi.c
 
 # C++ sources that can be compiled in ARM or THUMB mode depending on the global
 # setting.

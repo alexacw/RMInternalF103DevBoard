@@ -49,6 +49,8 @@ extern "C"
 
     typedef bool bool_t;
 
+#define MPU_I2CD &I2CD2
+
 #define MPU6050_ADDRESS_AD0_LOW 0x68  // address pin low (GND), default for InvenSense evaluation board
 #define MPU6050_ADDRESS_AD0_HIGH 0x69 // address pin high (VCC)
 #define MPU6050_DEFAULT_ADDRESS MPU6050_ADDRESS_AD0_LOW
@@ -197,6 +199,7 @@ extern "C"
 #define MPU6050_GCONFIG_FS_SEL_BIT 4
 #define MPU6050_GCONFIG_FS_SEL_LENGTH 2
 
+//last number = aboslute maximum measured angular speed in dps
 #define MPU6050_GYRO_FS_250 0x00
 #define MPU6050_GYRO_FS_500 0x01
 #define MPU6050_GYRO_FS_1000 0x02
@@ -210,6 +213,7 @@ extern "C"
 #define MPU6050_ACONFIG_ACCEL_HPF_BIT 2
 #define MPU6050_ACONFIG_ACCEL_HPF_LENGTH 3
 
+//last number = aboslute maximum measured acceleration in g
 #define MPU6050_ACCEL_FS_2 0x00
 #define MPU6050_ACCEL_FS_4 0x01
 #define MPU6050_ACCEL_FS_8 0x02
